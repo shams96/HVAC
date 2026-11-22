@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.astro/
+.env*
+api/config/catalog.json

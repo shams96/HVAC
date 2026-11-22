@@ -1,0 +1,1423 @@
+{
+  "month": "2026-12",
+  "generatedAt": "2026-12-10T15:00:00.000Z",
+  "fixture": true,
+  "panel": {
+    "version": "FIXTURE 2026-11 v1",
+    "size": 40,
+    "engines": [
+      {
+        "engine": "google_ai_overview",
+        "method": "manual",
+        "runBy": "Fixture Person",
+        "completed": true,
+        "recorded": 40,
+        "of": 40,
+        "appeared": 8,
+        "cited": 3
+      },
+      {
+        "engine": "google_search",
+        "method": "manual",
+        "runBy": "Fixture Person",
+        "completed": true,
+        "recorded": 40,
+        "of": 40,
+        "appeared": 14,
+        "cited": 14
+      },
+      {
+        "engine": "perplexity",
+        "method": "manual",
+        "runBy": "Fixture Person",
+        "completed": false,
+        "recorded": 22,
+        "of": 40,
+        "appeared": 6,
+        "cited": 2
+      }
+    ],
+    "queries": [
+      {
+        "position": 1,
+        "query": "furnace installation near me in City0",
+        "zip": "00001",
+        "serviceLine": "install",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-1.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_ai_overview-1.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-1.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 2,
+        "query": "how much does ac repair cost in City0",
+        "zip": "00001",
+        "serviceLine": "repair",
+        "intent": "price",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-2.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-2.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 2,
+            "cited": false,
+            "evidence": "fixture-perplexity-2.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 3,
+        "query": "emergency hvac tune up City0",
+        "zip": "00001",
+        "serviceLine": "tuneup",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-3.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-3.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-3.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 4,
+        "query": "best furnace installation company in City1",
+        "zip": "00002",
+        "serviceLine": "install",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-4.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-4.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-4.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 5,
+        "query": "ac repair 00002",
+        "zip": "00002",
+        "serviceLine": "repair",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-5.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-5.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-5.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 6,
+        "query": "commercial hvac tune up City1",
+        "zip": "00002",
+        "serviceLine": "tuneup",
+        "intent": "commercial",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-6.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 6,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-6.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 6,
+            "cited": false,
+            "evidence": "fixture-perplexity-6.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 7,
+        "query": "furnace installation in City2 XX",
+        "zip": "00003",
+        "serviceLine": "install",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-7.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-7.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-7.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 8,
+        "query": "who does ac repair in City2",
+        "zip": "00003",
+        "serviceLine": "repair",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-8.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-8.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-8.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 9,
+        "query": "hvac tune up near me in City2",
+        "zip": "00003",
+        "serviceLine": "tuneup",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-9.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-9.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-9.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 10,
+        "query": "how much does furnace installation cost in City3",
+        "zip": "00004",
+        "serviceLine": "install",
+        "intent": "price",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-10.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-10.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-perplexity-10.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 11,
+        "query": "emergency ac repair City3",
+        "zip": "00004",
+        "serviceLine": "repair",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-11.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 5,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-11.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-11.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 12,
+        "query": "best hvac tune up company in City3",
+        "zip": "00004",
+        "serviceLine": "tuneup",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-12.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-12.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-12.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 13,
+        "query": "furnace installation 00005",
+        "zip": "00005",
+        "serviceLine": "install",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-13.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-13.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-13.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 14,
+        "query": "commercial ac repair City4",
+        "zip": "00005",
+        "serviceLine": "repair",
+        "intent": "commercial",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-14.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-14.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 2,
+            "cited": false,
+            "evidence": "fixture-perplexity-14.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 15,
+        "query": "hvac tune up in City4 XX",
+        "zip": "00005",
+        "serviceLine": "tuneup",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-15.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-15.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-15.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 16,
+        "query": "how much does furnace installation cost in City0",
+        "zip": "00001",
+        "serviceLine": "install",
+        "intent": "price",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-16.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_ai_overview-16.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-16.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 17,
+        "query": "emergency ac repair City0",
+        "zip": "00001",
+        "serviceLine": "repair",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-17.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-17.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-17.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 18,
+        "query": "best hvac tune up company in City0",
+        "zip": "00001",
+        "serviceLine": "tuneup",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-18.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-18.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 6,
+            "cited": false,
+            "evidence": "fixture-perplexity-18.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 19,
+        "query": "furnace installation 00002",
+        "zip": "00002",
+        "serviceLine": "install",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-19.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-19.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-19.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 20,
+        "query": "commercial ac repair City1",
+        "zip": "00002",
+        "serviceLine": "repair",
+        "intent": "commercial",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-20.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-20.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-20.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 21,
+        "query": "hvac tune up in City1 XX",
+        "zip": "00002",
+        "serviceLine": "tuneup",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-21.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 3,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-21.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-perplexity-21.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 22,
+        "query": "who does furnace installation in City2",
+        "zip": "00003",
+        "serviceLine": "install",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-22.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-22.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-perplexity-22.png",
+            "change": "no previous result"
+          }
+        }
+      },
+      {
+        "position": 23,
+        "query": "ac repair near me in City2",
+        "zip": "00003",
+        "serviceLine": "repair",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-23.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-23.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 24,
+        "query": "how much does hvac tune up cost in City2",
+        "zip": "00003",
+        "serviceLine": "tuneup",
+        "intent": "price",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-24.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-24.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 25,
+        "query": "emergency furnace installation City3",
+        "zip": "00004",
+        "serviceLine": "install",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-25.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-25.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 26,
+        "query": "best ac repair company in City3",
+        "zip": "00004",
+        "serviceLine": "repair",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-26.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 2,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-26.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 27,
+        "query": "hvac tune up 00004",
+        "zip": "00004",
+        "serviceLine": "tuneup",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-27.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-27.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 28,
+        "query": "commercial furnace installation City4",
+        "zip": "00005",
+        "serviceLine": "install",
+        "intent": "commercial",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-28.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-28.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 29,
+        "query": "ac repair in City4 XX",
+        "zip": "00005",
+        "serviceLine": "repair",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-29.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-29.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 30,
+        "query": "who does hvac tune up in City4",
+        "zip": "00005",
+        "serviceLine": "tuneup",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-30.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-30.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 31,
+        "query": "emergency furnace installation City0",
+        "zip": "00001",
+        "serviceLine": "install",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-31.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_ai_overview-31.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 32,
+        "query": "best ac repair company in City0",
+        "zip": "00001",
+        "serviceLine": "repair",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-32.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-32.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 33,
+        "query": "hvac tune up 00001",
+        "zip": "00001",
+        "serviceLine": "tuneup",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-33.png",
+            "change": "lost"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-33.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 34,
+        "query": "commercial furnace installation City1",
+        "zip": "00002",
+        "serviceLine": "install",
+        "intent": "commercial",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-34.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-34.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 35,
+        "query": "ac repair in City1 XX",
+        "zip": "00002",
+        "serviceLine": "repair",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-35.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-35.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 36,
+        "query": "who does hvac tune up in City1",
+        "zip": "00002",
+        "serviceLine": "tuneup",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-36.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": true,
+            "position": 6,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-36.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 37,
+        "query": "furnace installation near me in City2",
+        "zip": "00003",
+        "serviceLine": "install",
+        "intent": "local",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 1,
+            "cited": true,
+            "evidence": "fixture-google_search-37.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-37.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 38,
+        "query": "how much does ac repair cost in City2",
+        "zip": "00003",
+        "serviceLine": "repair",
+        "intent": "price",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-38.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-38.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 39,
+        "query": "emergency hvac tune up City2",
+        "zip": "00003",
+        "serviceLine": "tuneup",
+        "intent": "urgent",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_search-39.png",
+            "change": "same"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-39.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      },
+      {
+        "position": 40,
+        "query": "best furnace installation company in City3",
+        "zip": "00004",
+        "serviceLine": "install",
+        "intent": "trust",
+        "engines": {
+          "google_search": {
+            "recorded": true,
+            "appeared": true,
+            "position": 4,
+            "cited": true,
+            "evidence": "fixture-google_search-40.png",
+            "change": "gained"
+          },
+          "google_ai_overview": {
+            "recorded": true,
+            "appeared": false,
+            "position": null,
+            "cited": false,
+            "evidence": "fixture-google_ai_overview-40.png",
+            "change": "no previous result"
+          },
+          "perplexity": {
+            "recorded": false
+          }
+        }
+      }
+    ],
+    "citedDomains": [
+      {
+        "domain": "rival-hvac.example",
+        "answers": 52,
+        "ours": false
+      },
+      {
+        "domain": "directory.example",
+        "answers": 51,
+        "ours": false
+      },
+      {
+        "domain": "fixture-company.example",
+        "answers": 25,
+        "ours": true
+      }
+    ]
+  },
+  "search": {
+    "byZip": [
+      {
+        "zip": "00001",
+        "impressions": 800,
+        "clicks": 12,
+        "prevImpressions": 400,
+        "prevClicks": 6,
+        "ctr": 0.015
+      },
+      {
+        "zip": "00002",
+        "impressions": 1100,
+        "clicks": 18,
+        "prevImpressions": 550,
+        "prevClicks": 9,
+        "ctr": 0.016363636363636365
+      },
+      {
+        "zip": "00003",
+        "impressions": 1400,
+        "clicks": 24,
+        "prevImpressions": 700,
+        "prevClicks": 12,
+        "ctr": 0.017142857142857144
+      }
+    ],
+    "other": [
+      {
+        "source": "gbp",
+        "metric": "calls",
+        "dimension": "branch branch-a",
+        "value": 31
+      },
+      {
+        "source": "gbp",
+        "metric": "direction_requests",
+        "dimension": "branch branch-a",
+        "value": 12
+      },
+      {
+        "source": "gbp",
+        "metric": "website_clicks",
+        "dimension": "branch branch-a",
+        "value": 58
+      },
+      {
+        "source": "gsc",
+        "metric": "clicks",
+        "dimension": "page /services/repair/",
+        "value": 40
+      },
+      {
+        "source": "gsc",
+        "metric": "impressions",
+        "dimension": "page /services/repair/",
+        "value": 3000
+      }
+    ]
+  },
+  "funnel": {
+    "cohortNote": "Leads created in the month; a job is a lead that reached booked or won (at any time so far).",
+    "totals": {
+      "leads": 16,
+      "calls": 4,
+      "forms": 8,
+      "chats": 2,
+      "bookings": 2,
+      "b2b": 1,
+      "unrouted": 2,
+      "jobs": 6,
+      "leadToJobRate": 0.375,
+      "spendCents": 155050,
+      "costPerJobCents": 25842
+    },
+    "byZip": [
+      {
+        "zip": "00001",
+        "leads": 6,
+        "calls": 2,
+        "forms": 2,
+        "chats": 0,
+        "bookings": 2,
+        "b2b": 0,
+        "unrouted": 0,
+        "jobs": 2,
+        "leadToJobRate": 0.3333333333333333
+      },
+      {
+        "zip": "00002",
+        "leads": 4,
+        "calls": 0,
+        "forms": 4,
+        "chats": 0,
+        "bookings": 0,
+        "b2b": 1,
+        "unrouted": 0,
+        "jobs": 1,
+        "leadToJobRate": 0.25
+      },
+      {
+        "zip": "00003",
+        "leads": 4,
+        "calls": 0,
+        "forms": 2,
+        "chats": 2,
+        "bookings": 0,
+        "b2b": 0,
+        "unrouted": 0,
+        "jobs": 2,
+        "leadToJobRate": 0.5
+      },
+      {
+        "zip": "00009",
+        "leads": 2,
+        "calls": 2,
+        "forms": 0,
+        "chats": 0,
+        "bookings": 0,
+        "b2b": 0,
+        "unrouted": 2,
+        "jobs": 1,
+        "leadToJobRate": 0.5
+      }
+    ]
+  },
+  "caveats": [
+    "The perplexity run is incomplete (22 of 40 queries recorded).",
+    "Only 16 leads this month: rates from small counts swing a lot, so read them as counts.",
+    "2 lead(s) were unrouted: no routing rule covers their ZIP and service.",
+    "Calls count only leads that came in as calls. Call tracking data is not connected yet.",
+    "Panel results are what a person recorded on the day. Answers vary by location, time and personalization, so treat month to month changes as signals, not proof."
+  ]
+}

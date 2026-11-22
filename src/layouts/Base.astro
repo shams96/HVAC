@@ -1,0 +1,82 @@
+---
+import "@fontsource-variable/manrope";
+import "../styles/tokens.css";
+import "../styles/typography.css";
+import "../styles/global.css";
+import Icon from "../components/Icon.astro";
+import ChatWidget from "../components/ChatWidget.astro";
+import { business, isPlaceholderBuild, isFixtureBuild } from "../data/business";
+
+interface Props {
+  title: string;
+  description: string;
+  jsonld?: object[];
+  noindex?: boolean;
+}
+const { title, description, jsonld = [], noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// Escape "<" in JSON-LD so a value can never close the script tag. Built without a literal backslash on purpose.
+const LT = String.fromCharCode(92) + "u003c";
+const ldJson = jsonld.map((j) => JSON.stringify(j).replace(/</g, LT));
+const tel = business.phoneE164 ? `tel:${business.phoneE164}` : null;
+const book = business.bookingUrl;
+const path = Astro.url.pathname;
+const chatApi = import.meta.env.PUBLIC_CHAT_API; // set only when the chat API is deployed; otherwise no chat UI renders
+const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    {/* Empty icon until the owner supplies a brand favicon; avoids a /favicon.ico 404. */}
+    <link rel="icon" href="data:," />
+    {(isPlaceholderBuild || isFixtureBuild || noindex) && <meta name="robots" content="noindex, nofollow" />}
+    {ldJson.map((j) => <script type="application/ld+json" set:html={j} />)}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="bar">
+        <a class="brand" href="/" aria-current={path === "/" ? "page" : undefined}>{business.legalName ?? "Company name pending"}</a>
+        <nav aria-label="Primary">
+          <a href="/#services">Services</a>
+          <a href="/service-area/" aria-current={current("/service-area/")}>Service area</a>
+        </nav>
+        <div class="actions">
+          {tel ? <a class="btn" href={tel}><Icon name="phone" />{business.phoneDisplay}</a> : <span class="btn btn-pending" role="note"><Icon name="phone" />Phone pending</span>}
+          {book ? <a class="btn" href={book}><Icon name="calendar-check" />Book service</a> : <span class="btn btn-pending" role="note"><Icon name="calendar-check" />Booking pending</span>}
+        </div>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="inner">
+        <div>
+          <p class="body-1">{business.legalName ?? "Company name pending"}</p>
+          {business.streetAddress && <p class="body-6">{business.streetAddress}, {business.city}, {business.state} {business.postalCode}</p>}
+          {business.hours && <p class="body-6">{business.hours}</p>}
+        </div>
+        <ul class="body-5" aria-label="Legal">
+          <li><a href="/privacy/">Privacy policy</a></li>
+          <li><a href="/terms/">Terms</a></li>
+          <li><a href="#main">Back to top</a></li>
+        </ul>
+      </div>
+    </footer>
+    {chatApi && <ChatWidget api={chatApi} />}
+    {/* Mobile click-to-call bar, mirrors the header actions */}
+    <div class="sticky-bar" aria-label="Call or book">
+      {tel ? <a class="btn" href={tel}><Icon name="phone" />Call {business.phoneDisplay}</a> : <span class="btn btn-pending"><Icon name="phone" />Phone pending</span>}
+      {book ? <a class="btn" href={book}><Icon name="calendar-check" />Book</a> : <span class="btn btn-pending"><Icon name="calendar-check" />Booking pending</span>}
+    </div>
+  </body>
+</html>

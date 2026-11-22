@@ -1,0 +1,23 @@
+{
+  "name": "hvac-api",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node src/main.mjs",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "measure": "node src/measure/cli.mjs"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.4.3",
+    "@fastify/rate-limit": "^11.3.0",
+    "fastify": "^5.12.8",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17",
+    "@electric-sql/pglite-socket": "^0.2.20"
+  }
+}

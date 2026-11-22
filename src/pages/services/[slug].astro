@@ -1,0 +1,52 @@
+---
+import Base from "../../layouts/Base.astro";
+import { services, type Service } from "../../data/services";
+import { activeAreas } from "../../data/service-areas";
+import { business } from "../../data/business";
+import { buildService } from "../../lib/jsonld.mjs";
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+const { service } = Astro.props as { service: Service };
+const areas = activeAreas.filter((a) => a.serviceLines.includes(service.slug));
+const siteUrl = (Astro.site ?? new URL("http://localhost")).origin;
+const ld = buildService(service, business, siteUrl);
+const priceText = service.pricing.kind === "approved" ? `Price: ${service.pricing.amount} ${service.pricing.currency}.` : "Estimates are free.";
+---
+<Base title={service.name} description={service.directAnswer} jsonld={ld ? [ld] : []}>
+  <article class="wrap">
+    <h1 class="heading-2">{service.name}</h1>
+    {/* Direct answer first: what it is, who it is for. */}
+    <p class="lead">{service.directAnswer}</p>
+    <p><strong>Who it is for:</strong> {service.whoFor}</p>
+
+    <div class="cols">
+      <section aria-labelledby="scope">
+        <h2 class="heading-5" id="scope">Typical scope</h2>
+        <ul>{service.typicalScope.map((i) => <li>{i}</li>)}</ul>
+      </section>
+      <section aria-labelledby="drivers">
+        <h2 class="heading-5" id="drivers">What drives the price</h2>
+        <ul>{service.priceDrivers.map((i) => <li>{i}</li>)}</ul>
+        <p class="price">{priceText}</p>
+      </section>
+    </div>
+
+    <section aria-labelledby="where">
+      <h2 class="heading-5" id="where">Where we offer it</h2>
+      {areas.length ? (
+        <ul>{areas.map((a) => <li><a href={`/service-area/${a.slug}/`}>{a.city}, {a.state} {a.zip}</a></li>)}</ul>
+      ) : <p>Service areas pending.</p>}
+    </section>
+  </article>
+</Base>
+
+<style>
+  .lead { font: var(--weight-regular) var(--text-xl) / var(--lh-xl) var(--font-body); max-width: 60ch; }
+  .cols { display: grid; gap: var(--space-300); margin: var(--space-600) 0; }
+  /* Memorable element for this template: scope and price drivers side by side. */
+  .cols section { border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-xl); background: var(--color-surface-raised); padding: var(--space-300); }
+  .price { font-weight: 600; }
+  @media (min-width: 48rem) { .cols { grid-template-columns: var(--layout-half) var(--layout-half); } }
+</style>

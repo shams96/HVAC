@@ -1,0 +1,155 @@
+---
+// Layout A (classic hero plus sections): the visitor's one intent is "do you serve me, and how do I get help".
+// Copy below is DRAFT pending owner approval. No facts are invented: anything that needs a real fact is data driven
+// (src/data/*) and appears only when the owner has supplied it.
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import CoverageForm from "../components/CoverageForm.astro";
+import ServiceAreaBands from "../components/ServiceAreaBands.astro";
+import { services } from "../data/services";
+import { activeAreas } from "../data/service-areas";
+import { business, isPlaceholderBuild, isFixtureBuild } from "../data/business";
+import { buildLocalBusiness } from "../lib/jsonld.mjs";
+
+const siteUrl = (Astro.site ?? new URL("http://localhost")).origin;
+const ld = buildLocalBusiness(business, activeAreas, siteUrl);
+const showPending = isPlaceholderBuild || isFixtureBuild;
+const licences = business.licenseNumbers?.length ? business.licenseNumbers.join(", ") : null;
+const freeEstimate = services.some((s) => s.pricing.kind === "free-estimate");
+const steps = [
+  { title: "Check your ZIP code", body: "Enter your ZIP code to see whether we serve it and which services we offer there." },
+  { title: "Tell us what you need", body: "Describe the problem or ask for an estimate. You can call, book, or use the form." },
+  { title: "We confirm the details with you", body: "A person confirms the details with you before any visit is scheduled." },
+];
+---
+<Base
+  title="Heating and cooling service for homes and commercial buildings"
+  description="Check whether we serve your ZIP code, see what each service involves and what drives its price, then request an estimate or book a service call."
+  jsonld={ld ? [ld] : []}
+>
+  <!-- 1. Hero -->
+  <section class="wrap hero hero-reveal" aria-labelledby="hero-title">
+    <div class="copy stack">
+      <h1 id="hero-title" class="heading-1 measure">Heating and cooling help for homes and commercial buildings.</h1>
+      <p class="body-3 measure sub">Enter your ZIP code to see whether we serve your area, then request an estimate or book a service call.</p>
+      <CoverageForm idSuffix="hero" />
+      <p class="proof body-5">
+        {licences ? <><Icon name="shield-check" /> Licence: {licences}</> : showPending && <span class="pending">{"{{licence and insurance proof}}"}</span>}
+      </p>
+    </div>
+    <div class="visual" aria-label="Service coverage by travel time">
+      <ServiceAreaBands areas={activeAreas} compact />
+    </div>
+  </section>
+
+  <!-- 2. Services -->
+  <div class="full-bleed band-raised">
+    <section id="services" class="wrap" aria-labelledby="services-title">
+      <h2 id="services-title" class="heading-2">What we help with</h2>
+      {services.length === 0 ? (
+        showPending && <p class="pending">{"{{service lines, approved by the owner}}"}</p>
+      ) : (
+        <ul class="rows">
+          {services.map((s) => (
+            <li>
+              <Icon name="wrench" />
+              <div>
+                <h3 class="title-1">{s.name}</h3>
+                <p class="body-3">{s.directAnswer}</p>
+              </div>
+              <a class="body-4" href={`/services/${s.slug}/`}>See scope and price drivers<span class="sr-only"> for {s.name}</span></a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  </div>
+
+  <!-- 3. Tagline (static: the brief allows one orchestrated motion, and the hero reveal is it) -->
+  <section class="wrap tagline" aria-label="Our approach">
+    <p class="heading-2 measure">Clear scope. Clear price drivers. A person confirms the details before anything is scheduled.</p>
+  </section>
+
+  <!-- 4. How it works: a true sequence, so numbered -->
+  <div class="full-bleed band-brand">
+    <section class="wrap" aria-labelledby="how-title">
+      <h2 id="how-title" class="heading-2">How it works</h2>
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li>
+            <span class="num title-1" aria-hidden="true">{i + 1}</span>
+            <div>
+              <h3 class="title-1">{s.title}</h3>
+              <p class="body-3">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {freeEstimate && <p class="body-1 risk">Estimates are free.</p>}
+    </section>
+  </div>
+
+  <!-- 5. Service area -->
+  <section id="service-area" class="wrap" aria-labelledby="area-title">
+    <h2 id="area-title" class="heading-2">Where we work</h2>
+    {activeAreas.length === 0 ? (
+      showPending && <p class="pending">{"{{ZIP codes we serve}}"}</p>
+    ) : (
+      <>
+        <p class="body-3">We serve {activeAreas.length} ZIP codes, grouped by travel time from our branch.</p>
+        <p><a class="body-1" href="/service-area/">See every ZIP code we serve</a></p>
+      </>
+    )}
+  </section>
+
+  <!-- 6. Proof: only real reviews and jobs, never invented. Renders when review data exists. -->
+  {showPending && (
+    <div class="full-bleed band-raised">
+      <section class="wrap" aria-labelledby="proof-title">
+        <h2 id="proof-title" class="heading-3">What customers say</h2>
+        <p class="pending">{"{{reviews captured from an official source, shown with their source}}"}</p>
+      </section>
+    </div>
+  )}
+
+  <!-- 7. FAQ: omitted until the owner supplies real customer questions (FAQ markup needs real questions). -->
+
+  <!-- 8. Final CTA, same action as the hero -->
+  <div class="full-bleed band-raised">
+    <section class="wrap final" aria-labelledby="final-title">
+      <h2 id="final-title" class="heading-3">Check whether we serve your ZIP code</h2>
+      <CoverageForm idSuffix="final" />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .hero { display: grid; gap: var(--space-600); align-items: center; padding-block: var(--space-700); }
+  .measure { max-width: var(--measure-hero); }
+  .sub { color: var(--color-ink-muted); }
+  .proof { margin: 0; display: flex; align-items: center; gap: var(--space-75); color: var(--color-ink-muted); }
+  /* Nested radius: outer 16px (radius-2xl) with 8px padding gives an inner radius of 8px (radius-lg). */
+  .visual { padding: var(--space-75); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-2xl); background: var(--color-surface-raised); }
+  .visual > :global(*) { border-radius: var(--radius-lg); }
+
+  .rows { list-style: none; display: grid; gap: 0; margin-top: var(--space-400); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-xl); background: var(--color-surface); }
+  .rows li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-200); padding: var(--space-300); align-items: start; }
+  .rows li + li { border-top: var(--border-thin) solid var(--color-rule); }
+  .rows li > a { grid-column: 2; }
+  .rows p { margin: var(--space-50) 0 0; }
+
+  .tagline { padding-block: var(--space-800); }
+  .steps { list-style: none; display: grid; gap: var(--space-400); margin-top: var(--space-400); }
+  .steps li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-200); align-items: start; }
+  .steps p { margin: var(--space-50) 0 0; }
+  .num { display: inline-flex; align-items: center; justify-content: center; inline-size: var(--touch-min); block-size: var(--touch-min); border: var(--border-thin) solid var(--color-surface); border-radius: var(--radius-full); }
+  .risk { margin: var(--space-400) 0 0; }
+  .final { display: grid; gap: var(--space-300); }
+
+  @media (min-width: 64rem) {
+    .hero { grid-template-columns: 1.15fr 0.85fr; }
+    .rows li { grid-template-columns: auto 1fr auto; align-items: center; }
+    .rows li > a { grid-column: auto; }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+import Base from "../../layouts/Base.astro";
+import { activeAreas, type ServiceArea } from "../../data/service-areas";
+import { services } from "../../data/services";
+
+export function getStaticPaths() {
+  return activeAreas.map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+const { area } = Astro.props as { area: ServiceArea };
+const offered = services.filter((s) => area.serviceLines.includes(s.slug));
+const jobs = area.localJobs.filter((j) => j.approved);
+---
+<Base
+  title={`Heating and cooling service in ${area.city}, ${area.state} ${area.zip}`}
+  description={`Heating and cooling service in ${area.city}, ${area.state} ${area.zip}: services offered, recent local work, and local notes.`}
+>
+  <article class="wrap">
+    <p class="crumb caption-2"><a href="/service-area/">Service area</a> / {area.zip}</p>
+    <h1 class="heading-2">Heating and cooling service in {area.city}, {area.state} {area.zip}</h1>
+    <p>We serve {area.city} ({area.zip}) from our branch, within a travel time of {area.travelBand} minutes.</p>
+
+    <section aria-labelledby="jobs">
+      <h2 class="heading-4" id="jobs">Recent work in {area.city}</h2>
+      <ul class="log">
+        {jobs.map((j) => <li>{j.summary}</li>)}
+      </ul>
+    </section>
+
+    <section aria-labelledby="notes">
+      <h2 class="heading-4" id="notes">Local notes</h2>
+      <ul class="notes">
+        {area.localFacts.map((f) => (
+          <li>{f.text} <span class="src">Source: <a href={f.sourceUrl} rel="noopener">{f.sourceLabel}</a></span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="svc">
+      <h2 class="heading-4" id="svc">Services in {area.city}</h2>
+      <ul>
+        {offered.map((s) => <li><a href={`/services/${s.slug}/`}>{s.name}</a></li>)}
+      </ul>
+    </section>
+
+    <p class="verified">Details last confirmed {area.lastVerified}.</p>
+  </article>
+</Base>
+
+<style>
+  .crumb { color: var(--color-ink-muted); margin-bottom: var(--space-75); }
+  /* Memorable element for this template: the local job log. */
+  .log { list-style: none; padding: 0; margin: var(--space-200) 0 var(--space-600); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-xl); background: var(--color-surface-raised); }
+  .log li { padding: var(--space-200) var(--space-300); }
+  .log li + li { border-top: var(--border-thin) solid var(--color-rule); }
+  .notes { padding-left: var(--space-4); }
+  .src { display: block; color: var(--color-ink-muted); font: var(--weight-regular) var(--text-sm) / var(--lh-sm) var(--font-body); }
+  .verified { color: var(--color-ink-muted); font: var(--weight-regular) var(--text-sm) / var(--lh-sm) var(--font-body); margin-top: var(--space-600); }
+</style>

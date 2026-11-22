@@ -1,0 +1,30 @@
+---
+// The page's single primary action: check coverage by ZIP. Works without JavaScript (GET to /service-area/).
+interface Props { idSuffix: string }
+const { idSuffix } = Astro.props;
+const id = `zip-${idSuffix}`;
+---
+<form class="coverage" action="/service-area/" method="get">
+  <label class="body-1" for={id}>Your ZIP code</label>
+  <div class="row">
+    <input
+      id={id} name="zip" inputmode="numeric" autocomplete="postal-code" required
+      pattern="[0-9]{5}" maxlength="5" aria-describedby={`${id}-help`}
+      title="Enter a 5 digit ZIP code"
+    />
+    <button type="submit" class="btn btn-lg">Check coverage</button>
+  </div>
+  <p id={`${id}-help`} class="caption-2 help">We will show whether we serve your ZIP code and which services we offer there.</p>
+</form>
+
+<style>
+  .coverage { display: grid; gap: var(--space-75); max-width: 28rem; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-75); }
+  input {
+    min-height: var(--touch-min); padding: var(--space-75) var(--space-100); inline-size: 9rem;
+    font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); color: var(--color-ink);
+    background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius-lg);
+  }
+  input:user-invalid { border-color: var(--color-accent); border-width: var(--border-strong); }
+  .help { margin: 0; color: var(--color-ink-muted); }
+</style>

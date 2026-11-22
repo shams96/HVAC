@@ -1,0 +1,17 @@
+---
+// Phosphor icons (MIT), inlined as SVG. Decorative by default; pass `label` to expose to assistive tech.
+interface Props { name: string; label?: string }
+const files = import.meta.glob(
+  "/node_modules/@phosphor-icons/core/assets/regular/{phone,calendar-check,map-pin,wrench,list-checks,chat-circle-text,shield-check}.svg",
+  { query: "?raw", import: "default", eager: true }
+) as Record<string, string>;
+const { name, label } = Astro.props;
+const svg = files[`/node_modules/@phosphor-icons/core/assets/regular/${name}.svg`];
+if (!svg) throw new Error(`Icon "${name}" is not in the allowed Phosphor set in Icon.astro`);
+---
+<span class="icon" role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : "true"} set:html={svg} />
+
+<style>
+  .icon { display: inline-flex; inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
+  .icon :global(svg) { inline-size: var(--layout-full); block-size: var(--layout-full); fill: currentColor; }
+</style>

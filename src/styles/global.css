@@ -1,0 +1,92 @@
+*, *::before, *::after { box-sizing: border-box; }
+/* 100vw includes the scrollbar width, so clip at the root (a body-level clip does not reach the viewport). */
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: var(--weight-regular) var(--text-base) / var(--lh-base) var(--font-body);
+  padding-bottom: 4.5rem; /* room for the mobile call bar */
+  overflow-x: clip;
+}
+h1, h2, h3, h4 { margin: 0; }
+p { margin: 0 0 var(--space-200); max-width: 65ch; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; }
+a { color: var(--color-primary); }
+:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.skip { position: absolute; left: -999px; top: 0; background: var(--color-surface-raised); color: var(--color-ink); padding: var(--space-75) var(--space-200); }
+.skip:focus { left: var(--space-75); top: var(--space-75); z-index: 20; }
+.sr-only { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---- Floating navigation: compact, off the top edge, translucent over a blur. Phone and booking stay visible. ---- */
+.site-header { position: sticky; top: var(--space-100); z-index: 10; padding-inline: var(--gutter); }
+.bar {
+  max-width: var(--content-max); margin: var(--space-100) auto 0;
+  display: flex; align-items: center; gap: var(--space-200);
+  padding: var(--space-75) var(--space-100) var(--space-75) var(--space-200);
+  background: var(--color-nav-surface);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: var(--border-thin) solid var(--color-rule);
+  border-radius: var(--radius-xl);
+}
+.brand { margin-right: auto; text-decoration: none; color: var(--color-ink); font: var(--weight-semibold) var(--text-base) / var(--lh-base) var(--font-body); }
+.bar nav { display: none; gap: var(--space-300); }
+.bar nav a { color: var(--color-ink); text-decoration: none; padding: var(--space-75) 0; font: var(--weight-medium) var(--text-nav) / var(--lh-sm) var(--font-body); }
+.bar nav a:hover { text-decoration: underline; }
+.bar nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: var(--space-50); }
+.actions { display: none; gap: var(--space-75); }
+
+/* ---- Buttons: accent is for buttons and phone/booking prompts only. ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-75);
+  min-height: var(--touch-min); padding: var(--space-75) var(--space-100);
+  background: var(--color-accent); color: var(--color-on-accent) !important;
+  font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body);
+  text-decoration: none; border: 0; border-radius: var(--radius-lg); cursor: pointer;
+  transition: transform var(--dur-color) var(--ease), background-color var(--dur-color) var(--ease);
+}
+.btn:hover { background: var(--color-accent-hover); transform: translateY(-1px); }
+.btn:active { transform: scale(0.98); }
+.btn-lg { font: var(--weight-semibold) var(--text-base) / var(--lh-base) var(--font-body); padding-inline: var(--space-200); }
+.btn-pending { cursor: not-allowed; }
+.btn-pending:hover { background: var(--color-accent); transform: none; }
+@media (prefers-reduced-motion: reduce) { .btn, .btn:hover, .btn:active { transition: opacity var(--dur-color) var(--ease); transform: none; } }
+
+.sticky-bar { position: fixed; inset: auto 0 0 0; display: flex; gap: var(--space-75); padding: var(--space-75) var(--gutter); background: var(--color-primary); z-index: 10; }
+.sticky-bar .btn { flex: var(--layout-full); box-shadow: 0 0 0 var(--border-strong) var(--color-surface); }
+
+/* ---- Layout ---- */
+.wrap { width: var(--layout-full); max-width: var(--content-max); margin: 0 auto; padding: var(--space-700) var(--gutter); }
+.full-bleed { width: var(--section-full); margin-left: var(--section-bleed-offset); }
+.band-raised { background: var(--color-surface-raised); border-block: var(--border-thin) solid var(--color-rule); }
+.band-brand { background: var(--color-primary); color: var(--color-surface); }
+.band-brand a { color: var(--color-surface); }
+.stack > * + * { margin-top: var(--space-200); }
+
+/* Placeholder marker shown only on placeholder or fixture builds. */
+.pending { display: inline-block; padding: var(--space-50) var(--space-100); border: var(--border-thin) dashed var(--color-ink-muted); border-radius: var(--radius-lg); color: var(--color-ink-muted); font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-body); }
+
+/* ---- Footer ---- */
+.site-footer { background: var(--color-primary); color: var(--color-surface); padding: var(--space-400) var(--gutter); }
+.site-footer a { color: var(--color-surface); }
+.site-footer .inner { max-width: var(--content-max); margin: 0 auto; display: flex; flex-wrap: wrap; gap: var(--space-200) var(--space-400); justify-content: space-between; }
+.site-footer ul { list-style: none; display: flex; gap: var(--space-300); flex-wrap: wrap; }
+
+@media (min-width: 48rem) {
+  .bar nav, .actions { display: flex; }
+  .sticky-bar { display: none; }
+  body { padding-bottom: 0; }
+  .wrap { padding-block: var(--space-800); }
+}
+
+/* The single orchestrated motion: hero reveal. Transform and opacity only. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-reveal { animation: reveal 600ms var(--ease) both; }
+  @keyframes reveal { from { opacity: 0; transform: translateY(var(--space-300)); } to { opacity: 1; transform: none; } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal { animation: fade 400ms var(--ease) both; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+}

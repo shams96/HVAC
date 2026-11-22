@@ -1,0 +1,45 @@
+/* Named text styles. Every piece of text uses one of these; sizes come from the scale tokens only. */
+.heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 { text-wrap: balance; margin: 0; }
+.body-1, .body-2, .body-3, .body-4, .body-5, .body-6, .title-1, .title-2, .title-3, .title-4, .title-5 { text-wrap: pretty; }
+
+/* Headings step down on small screens so the hero never overflows 390px. */
+.heading-1 { font: var(--weight-semibold) var(--text-4xl) / var(--lh-4xl) var(--font-body); }
+.heading-2 { font: var(--weight-semibold) var(--text-3xl) / var(--lh-3xl) var(--font-body); }
+.heading-3 { font: var(--weight-semibold) var(--text-2xl) / var(--lh-2xl) var(--font-body); }
+.heading-4 { font: var(--weight-semibold) var(--text-3xl) / var(--lh-3xl) var(--font-body); }
+.heading-5 { font: var(--weight-semibold) var(--text-2xl) / var(--lh-2xl) var(--font-body); }
+.heading-6 { font: var(--weight-semibold) var(--text-xl) / var(--lh-xl) var(--font-body); }
+@media (min-width: 48rem) {
+  .heading-1 { font: var(--weight-semibold) var(--text-5xl) / var(--lh-5xl) var(--font-body); }
+  .heading-2 { font: var(--weight-semibold) var(--text-4xl) / var(--lh-4xl) var(--font-body); }
+  .heading-3 { font: var(--weight-semibold) var(--text-3xl) / var(--lh-3xl) var(--font-body); }
+}
+@media (min-width: 64rem) {
+  .heading-1 { font: var(--weight-semibold) var(--text-6xl) / var(--lh-6xl) var(--font-body); }
+  .heading-2 { font: var(--weight-semibold) var(--text-5xl) / var(--lh-5xl) var(--font-body); }
+  .heading-3 { font: var(--weight-semibold) var(--text-4xl) / var(--lh-4xl) var(--font-body); }
+}
+
+.title-1 { font: var(--weight-medium) var(--text-xl) / var(--lh-xl) var(--font-body); }
+.title-2 { font: var(--weight-medium) var(--text-lg) / var(--lh-lg) var(--font-body); }
+.title-3 { font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); }
+.title-4 { font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.title-5 { font: var(--weight-medium) var(--text-xs) / var(--lh-xs) var(--font-body); }
+
+.body-1 { font: var(--weight-semibold) var(--text-base) / var(--lh-base) var(--font-body); }
+.body-2 { font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); }
+.body-3 { font: var(--weight-regular) var(--text-base) / var(--lh-base) var(--font-body); }
+.body-4 { font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.body-5 { font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.body-6 { font: var(--weight-regular) var(--text-sm) / var(--lh-sm) var(--font-body); }
+
+.button-lg { font: var(--weight-semibold) var(--text-lg) / var(--lh-lg) var(--font-body); }
+.button-md { font: var(--weight-semibold) var(--text-base) / var(--lh-base) var(--font-body); }
+.button-sm { font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.button-xsm { font: var(--weight-semibold) var(--text-xs) / var(--lh-xs) var(--font-body); }
+
+.caption-1 { font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.caption-2 { font: var(--weight-regular) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.caption-3 { font: var(--weight-semibold) var(--text-xs) / var(--lh-xs) var(--font-body); }
+.caption-4 { font: var(--weight-medium) var(--text-xs) / var(--lh-xs) var(--font-body); }
+.caption-5 { font: var(--weight-regular) var(--text-xs) / var(--lh-xs) var(--font-body); }

@@ -1,0 +1,48 @@
+---
+// Schematic (NOT geographic) view of coverage by travel-time band. Real boundaries need Census ZCTA geometry (deferred).
+import type { ServiceArea, TravelBand } from "../data/service-areas";
+interface Props { areas: ServiceArea[]; compact?: boolean }
+const { areas, compact = false } = Astro.props;
+const bands: { id: TravelBand; label: string; r: number }[] = [
+  { id: "30-45", label: "30 to 45 min", r: 150 },
+  { id: "15-30", label: "15 to 30 min", r: 100 },
+  { id: "0-15", label: "Up to 15 min", r: 50 },
+];
+const inBand = (b: TravelBand) => areas.filter((a) => a.travelBand === b);
+const summary = bands.map((b) => `${b.label}: ${inBand(b.id).length} ZIP codes`).join("; ");
+---
+<figure class:list={["bands", { compact }]}>
+  <svg viewBox="0 0 320 320" role="img" aria-labelledby="bands-title bands-desc">
+    <title id="bands-title">Service coverage by travel time from our branch</title>
+    <desc id="bands-desc">{summary}. Schematic, not a map.</desc>
+    {bands.map((b, i) => <circle cx="160" cy="160" r={b.r} class={`band band-${i}`} />)}
+    <circle cx="160" cy="160" r="6" class="hub" />
+    {bands.map((b) => <text x="160" y={160 - b.r + 16} text-anchor="middle" class="band-label">{b.label}</text>)}
+  </svg>
+  <figcaption>Schematic of travel-time bands from the branch. Not to scale and not a map.</figcaption>
+  <dl class="band-list">
+    {[...bands].reverse().map((b) => (
+      <>
+        <dt>{b.label}</dt>
+        <dd>{inBand(b.id).length ? inBand(b.id).map((a) => `${a.city} ${a.zip}`).join(", ") : "No ZIP codes yet"}</dd>
+      </>
+    ))}
+  </dl>
+</figure>
+
+<style>
+  .bands { margin: 0; display: grid; gap: var(--space-300); }
+  svg { width: var(--layout-full); max-width: 24rem; height: auto; }
+  .band { stroke: var(--color-primary); stroke-width: var(--border-thin); }
+  .band-0 { fill: var(--color-surface-raised); }
+  .band-1 { fill: var(--color-surface); }
+  .band-2 { fill: var(--color-surface-raised); }
+  .hub { fill: var(--color-primary); }
+  .band-label { font: var(--weight-medium) var(--text-xs) / var(--lh-xs) var(--font-body); fill: var(--color-ink); paint-order: stroke; stroke: var(--color-surface-raised); stroke-width: 0.25rem; stroke-linejoin: round; }
+  figcaption { color: var(--color-ink-muted); font: var(--weight-regular) var(--text-sm) / var(--lh-sm) var(--font-body); }
+  .band-list { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: var(--space-75) var(--space-300); }
+  .band-list dt { font-weight: 600; }
+  .band-list dd { margin: 0; }
+  @media (min-width: 48rem) { .bands:not(.compact) { grid-template-columns: var(--layout-half) var(--layout-half); align-items: start; } }
+  .compact { padding: var(--space-200); }
+</style>

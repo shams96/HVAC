@@ -1,0 +1,184 @@
+---
+// Chat widget. Rendered only when PUBLIC_CHAT_API is set at build time (otherwise no dead UI).
+// Everything the server sends is shown as plain text (textContent). Consent checkboxes are never pre-checked, and the
+// confirm button is a separate customer click: the model can only prepare a request, never send it.
+import Icon from "./Icon.astro";
+import { consentWording } from "../data/consent";
+import { isPlaceholderBuild, isFixtureBuild } from "../data/business";
+
+interface Props { api: string }
+const { api } = Astro.props;
+// Draft wording appears only on placeholder or fixture builds so the flow can be tested; production uses approved wording or none.
+const draft = { version: "draft-unapproved", sms: "FIXTURE wording: you may text me about this request.", email: "FIXTURE wording: you may email me about this request." };
+const wording = consentWording ?? (isPlaceholderBuild || isFixtureBuild ? draft : null);
+---
+<div id="chat-root" data-api={api} data-wording={wording ? JSON.stringify(wording) : ""}>
+  <button type="button" class="chat-open btn-brand" id="chat-open" aria-expanded="false" aria-controls="chat-panel">
+    <Icon name="chat-circle-text" />Chat with us
+  </button>
+
+  <section id="chat-panel" class="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden>
+    <header class="chat-head">
+      <h2 id="chat-title" class="title-2">Chat with us</h2>
+      <button type="button" class="chat-close" id="chat-close" aria-label="Close chat">Close</button>
+    </header>
+    <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <form id="chat-form" class="chat-form" autocomplete="off">
+      <label class="sr-only" for="chat-input">Your message</label>
+      <textarea id="chat-input" rows="2" maxlength="2000" required placeholder="Type your message"></textarea>
+      <button type="submit" class="btn" id="chat-send">Send</button>
+    </form>
+    <p class="caption-2 chat-note">The assistant can answer questions and prepare a request. Nothing is sent until you confirm it. For a gas smell or carbon monoxide alarm, leave the building and call 911.</p>
+  </section>
+</div>
+
+<script>
+  const root = document.getElementById("chat-root");
+  const API = root.dataset.api.replace(/\/$/, "");
+  const wording = root.dataset.wording ? JSON.parse(root.dataset.wording) : null;
+  const $ = (id) => document.getElementById(id);
+  const openBtn = $("chat-open"), panel = $("chat-panel"), closeBtn = $("chat-close"), log = $("chat-log");
+  const form = $("chat-form"), input = $("chat-input"), sendBtn = $("chat-send");
+  let token = null, starting = null, busy = false;
+
+  function add(role, text, extra) {
+    const p = document.createElement("p");
+    p.className = `msg msg-${role} body-3` + (extra === "alert" ? " msg-alert" : "");
+    if (extra === "alert") p.setAttribute("role", "alert");
+    p.textContent = text; // plain text only: no markup, no auto-linking
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function api(path, body) {
+    const res = await fetch(API + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    let data = null;
+    try { data = await res.json(); } catch { /* non-JSON error page */ }
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  function friendly(status, data) {
+    if (status === 429) return "You are sending messages too quickly. Please wait a moment and try again.";
+    if (status === 410) return "This chat has expired. Close it and open a new one to continue.";
+    if (status === 409 || status === 403) return "That request can no longer be confirmed. Please ask again.";
+    if (data && typeof data.message === "string") return data.message;
+    return "Chat is unavailable right now. Please call us or try again in a moment.";
+  }
+
+  async function ensureStarted() {
+    if (token) return true;
+    starting ||= api("/api/chat/start", {}).then((r) => {
+      starting = null;
+      if (!r.ok) { add("system", friendly(r.status, r.data)); return false; }
+      token = r.data.token;
+      add("assistant", r.data.greeting);
+      return true;
+    }).catch(() => { starting = null; add("system", friendly(0, null)); return false; });
+    return starting;
+  }
+
+  function renderPending(actions) {
+    // Cards live inside the message scroll area, so there is one scroll region and the buttons stay reachable.
+    log.querySelectorAll(".pending-card").forEach((n) => n.remove());
+    for (const a of actions || []) {
+      const card = document.createElement("div");
+      card.className = "pending-card";
+      const h = document.createElement("p"); h.className = "title-3"; h.textContent = "Please review this request"; card.appendChild(h);
+      const s = document.createElement("p"); s.className = "body-3"; s.textContent = a.summary; card.appendChild(s);
+      const boxes = {};
+      if (wording) {
+        for (const ch of ["sms", "email"]) {
+          const label = document.createElement("label"); label.className = "consent body-6";
+          const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = false; boxes[ch] = cb;
+          label.appendChild(cb); label.appendChild(document.createTextNode(" " + wording[ch]));
+          card.appendChild(label);
+        }
+      }
+      const row = document.createElement("div"); row.className = "pending-actions";
+      const yes = document.createElement("button"); yes.type = "button"; yes.className = "btn"; yes.textContent = "Confirm and send request";
+      const no = document.createElement("button"); no.type = "button"; no.className = "btn-quiet"; no.textContent = "Cancel";
+      row.append(yes, no); card.appendChild(row);
+      yes.addEventListener("click", async () => {
+        yes.disabled = no.disabled = true;
+        const consents = wording ? Object.entries(boxes).filter(([, cb]) => cb.checked).map(([channel]) => ({ channel, wordingVersion: wording.version })) : [];
+        const r = await api("/api/chat/confirm", { token, actionId: a.id, consents }).catch(() => null);
+        if (r && r.ok) { add("system", (r.data && r.data.message) || "Your request was sent. A person will follow up."); card.remove(); }
+        else { add("system", r ? friendly(r.status, r.data) : friendly(0, null)); yes.disabled = no.disabled = false; }
+      });
+      no.addEventListener("click", async () => {
+        yes.disabled = no.disabled = true;
+        await api("/api/chat/reject", { token, actionId: a.id }).catch(() => null);
+        add("system", "Request cancelled. Nothing was sent.");
+        card.remove();
+      });
+      log.appendChild(card);
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function send(text) {
+    if (busy) return;
+    busy = true; sendBtn.disabled = true;
+    add("user", text);
+    try {
+      if (!(await ensureStarted())) return;
+      const r = await api("/api/chat/message", { token, text });
+      if (!r.ok) { add("system", friendly(r.status, r.data)); return; }
+      add("assistant", r.data.reply, r.data.emergency ? "alert" : undefined);
+      renderPending(r.data.pendingActions);
+    } catch {
+      add("system", friendly(0, null));
+    } finally {
+      busy = false; sendBtn.disabled = false; input.focus();
+    }
+  }
+
+  function setOpen(open) {
+    panel.hidden = !open;
+    openBtn.setAttribute("aria-expanded", String(open));
+    openBtn.hidden = open;
+    if (open) { ensureStarted(); input.focus(); } else { openBtn.hidden = false; openBtn.focus(); }
+  }
+  openBtn.addEventListener("click", () => setOpen(true));
+  closeBtn.addEventListener("click", () => setOpen(false));
+  panel.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    send(t);
+  });
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+</script>
+
+<style is:global>
+  /* Global on purpose: message and card elements are created by the script, which Astro's scoped CSS cannot reach. */
+  #chat-root { position: fixed; inset-inline-end: var(--gutter); inset-block-end: calc(var(--gutter) + 4.5rem); z-index: 15; }
+  .chat-open { display: inline-flex; align-items: center; gap: var(--space-75); min-height: var(--touch-min); padding: var(--space-75) var(--space-200); border: 0; border-radius: var(--radius-full); cursor: pointer;
+    background: var(--color-primary); color: var(--color-surface); font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body);
+    transition: transform var(--dur-color) var(--ease); }
+  .chat-open:hover { transform: translateY(-1px); }
+  .chat-open:active { transform: scale(0.98); }
+  .chat-panel { inline-size: min(24rem, calc(100vw - 2 * var(--gutter))); max-block-size: min(34rem, calc(100vh - 8rem)); display: grid; grid-template-rows: auto 1fr auto auto;
+    background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-2xl); overflow: hidden; }
+  .chat-panel[hidden], .chat-open[hidden] { display: none; }
+  .chat-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-100) var(--space-200); background: var(--color-primary); color: var(--color-surface); }
+  .chat-close { background: transparent; color: var(--color-surface); border: var(--border-thin) solid var(--color-surface); border-radius: var(--radius-lg); min-block-size: var(--touch-min); padding: 0 var(--space-100); cursor: pointer; font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); }
+  .chat-log { overflow-y: auto; padding: var(--space-200); display: grid; gap: var(--space-100); align-content: start; min-block-size: 8rem; }
+  .msg { margin: 0; padding: var(--space-75) var(--space-100); border-radius: var(--radius-xl); max-inline-size: 85%; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg-assistant { background: var(--color-surface); border: var(--border-thin) solid var(--color-rule); justify-self: start; }
+  .msg-user { background: var(--color-primary); color: var(--color-surface); justify-self: end; }
+  .msg-system { color: var(--color-ink-muted); justify-self: center; text-align: center; max-inline-size: 100%; }
+  .msg-alert { border: var(--border-strong) solid var(--color-accent); }
+  .pending-card { margin: var(--space-100) 0 0; padding: var(--space-200); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius-xl); display: grid; gap: var(--space-100); }
+  .pending-card p { margin: 0; }
+  .consent { display: flex; gap: var(--space-75); align-items: start; }
+  .consent input { inline-size: 1.25rem; block-size: 1.25rem; flex: none; margin-top: var(--space-25); }
+  .pending-actions { display: flex; flex-wrap: wrap; gap: var(--space-75); }
+  .btn-quiet { min-block-size: var(--touch-min); padding: var(--space-75) var(--space-200); background: transparent; color: var(--color-ink); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius-lg); cursor: pointer; font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); }
+  .chat-form { display: flex; gap: var(--space-75); padding: var(--space-100) var(--space-200); border-top: var(--border-thin) solid var(--color-rule); align-items: end; }
+  .chat-form textarea { flex: 1; resize: none; padding: var(--space-75) var(--space-100); font: var(--weight-regular) var(--text-base) / var(--lh-base) var(--font-body); color: var(--color-ink); background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius-lg); }
+  .chat-note { margin: 0; padding: 0 var(--space-200) var(--space-100); color: var(--color-ink-muted); }
+  @media (min-width: 48rem) { #chat-root { inset-block-end: var(--space-300); inset-inline-end: var(--space-300); } }
+</style>

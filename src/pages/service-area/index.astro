@@ -1,0 +1,66 @@
+---
+import Base from "../../layouts/Base.astro";
+import ServiceAreaBands from "../../components/ServiceAreaBands.astro";
+import { activeAreas } from "../../data/service-areas";
+import { services } from "../../data/services";
+
+const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? slug;
+---
+<Base title="Service area" description="ZIP codes and cities we serve, with travel-time bands and the services offered in each.">
+  <section class="wrap">
+    <h1 class="heading-2">Service area</h1>
+    {activeAreas.length === 0 ? (
+      <p>Service area pending: the owner has not yet supplied the ZIP list.</p>
+    ) : (
+      <>
+        <p>We serve the ZIP codes below. Enter yours to jump to its page.</p>
+        <form id="zip-lookup" class="zip" method="get">
+          <label for="zip">Your ZIP code</label>
+          <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" />
+          <button type="submit" class="btn">Check coverage</button>
+        </form>
+        <p id="zip-miss" hidden>That ZIP code is not in our listed service area. Call us to confirm.</p>
+
+        <table>
+          <caption class="sr">Active service ZIP codes</caption>
+          <thead><tr><th scope="col">ZIP</th><th scope="col">City</th><th scope="col">Travel time</th><th scope="col">Services</th></tr></thead>
+          <tbody>
+            {activeAreas.map((a) => (
+              <tr>
+                <th scope="row"><a href={`/service-area/${a.slug}/`} data-zip={a.zip}>{a.zip}</a></th>
+                <td>{a.city}, {a.state}</td>
+                <td>{a.travelBand} min</td>
+                <td>{a.serviceLines.map(nameOf).join(", ")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h2 class="heading-4">Coverage by travel time</h2>
+        <ServiceAreaBands areas={activeAreas} />
+      </>
+    )}
+  </section>
+
+  <script is:inline>
+    // Progressive enhancement only: jump to a ZIP page when ?zip= matches. Content above renders without JS.
+    (function () {
+      var z = new URLSearchParams(location.search).get("zip");
+      if (!z || !/^\d{5}$/.test(z)) return;
+      var a = document.querySelector('a[data-zip="' + z + '"]');
+      if (a) location.replace(a.getAttribute("href"));
+      else { var m = document.getElementById("zip-miss"); if (m) m.hidden = false; }
+    })();
+  </script>
+</Base>
+
+<style>
+  .sr { position: absolute; left: -999rem; }
+  table { width: var(--layout-full); border-collapse: collapse; margin: var(--space-4) 0 var(--space-5); }
+  th, td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: var(--border-thin) solid var(--color-rule); }
+  thead th { border-bottom: var(--border-strong) solid var(--color-primary); }
+  .zip { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: end; margin: var(--space-3) 0; }
+  .zip label { flex-basis: var(--layout-full); font-weight: 600; }
+  .zip input { min-height: var(--touch-min); padding: 0 var(--space-3); font: inherit; color: var(--color-ink); background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius); width: 9rem; }
+  .zip .btn { border: 0; cursor: pointer; font: inherit; font-weight: 600; box-shadow: none; }
+</style>
