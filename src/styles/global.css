@@ -60,7 +60,7 @@ a { color: var(--color-primary); }
 /* ---- Layout ---- */
 .wrap { width: var(--layout-full); max-width: var(--content-max); margin: 0 auto; padding: var(--space-700) var(--gutter); }
 .full-bleed { width: var(--section-full); margin-left: var(--section-bleed-offset); }
-.band-raised { background: var(--color-surface-raised); border-block: var(--border-thin) solid var(--color-rule); }
+.band-raised { background: var(--color-surface); border-block: var(--border-thin) solid var(--color-rule); }
 .band-brand { background: var(--color-primary); color: var(--color-surface); }
 .band-brand a { color: var(--color-surface); }
 .stack > * + * { margin-top: var(--space-200); }

@@ -1,9 +1,9 @@
 /* Design tokens: the ONLY file allowed to contain hex values (enforced by scripts/contrast-audit.mjs). */
 :root {
   /* 60% neutral */
-  --color-surface: #fef9f3;
+  --color-surface: #f6eedd;
   --color-surface-raised: #ffffff;
-  --color-nav-surface: rgb(254 249 243 / 0.88); /* translucent over a blur; same hue as surface */
+  --color-nav-surface: rgb(246 238 221 / 0.88); /* translucent over a blur; same hue as surface */
   /* 30% brand */
   --color-primary: #186767;
   /* text */
@@ -14,7 +14,7 @@
   --color-accent-hover: #8f1d4a;
   --color-on-accent: #ffffff;
   --color-focus: #0b2a2a;
-  --color-rule: #d9cfc2;
+  --color-rule: #d6c8ad;
 
   /* One typeface per site (Manrope, SIL OFL, self-hosted). No italics, weights capped at semibold. */
   --font-body: "Manrope Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
