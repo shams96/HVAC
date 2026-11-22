@@ -18,8 +18,15 @@ if (await migrate(db)) console.log("schema applied");
 const { agentDeps, socialDeps, notes, warnings } = assembleDeps(cfg, { env: process.env });
 for (const n of notes) console.log(n);
 for (const w of warnings) console.warn(`WARNING: ${w}`);
+if (cfg.staffMode === "users") {
+  const n = Number((await db.query("SELECT count(*) AS n FROM staff_users WHERE disabled_at IS NULL")).rows[0].n);
+  console.log(`staff login: per-user accounts (${n} active)`);
+  if (n === 0) console.warn("WARNING: no staff accounts exist, so nobody can sign in: run `node src/staff-cli.mjs create-user <email> admin \"<name>\"` with STAFF_NEW_PASSWORD set");
+} else {
+  console.warn("WARNING: STAFF_AUTH_MODE=shared: one shared token, and the acting person is asserted by the caller. Set STAFF_AUTH_MODE=users before relying on approvals or audit trails");
+}
 
-const app = await buildServer({ db, staffToken: cfg.staffToken, logger: true, trustProxy: cfg.trustProxy, corsOrigins: cfg.corsOrigins, agentDeps, socialDeps });
+const app = await buildServer({ db, staffToken: cfg.staffToken, staffMode: cfg.staffMode, logger: true, trustProxy: cfg.trustProxy, corsOrigins: cfg.corsOrigins, agentDeps, socialDeps });
 
 let lastPurge = 0;
 const tick = async () => {

@@ -11,6 +11,8 @@ export interface Business {
   postalCode: string | null;
   licenseNumbers: string[] | null;
   hours: string | null;
+  serviceRegion: string | null; // human wording for the region, used in copy; owner stated: Dallas and Fort Worth
+  timeZone: string | null; // IANA zone, for hours and reporting
 }
 
 export const business: Business = {
@@ -20,10 +22,12 @@ export const business: Business = {
   bookingUrl: null,
   streetAddress: null,
   city: null,
-  state: null,
+  state: "TX", // owner said the work is in the DFW area (2026-11-22); Dallas and Fort Worth are in Texas
   postalCode: null,
   licenseNumbers: null,
   hours: null,
+  serviceRegion: "the Dallas and Fort Worth area",
+  timeZone: "America/Chicago", // DFW is in the Central time zone
 };
 
 // Fields the production build requires before it will emit.

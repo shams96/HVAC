@@ -22,10 +22,10 @@ Public intake (`POST /api/leads`), call-tracking intake (`POST /api/staff/leads`
 - Never UPDATE or DELETE `lead_events` or `consent_records` (the database refuses). Corrections are new events.
 
 ## Incident response (tier 3)
-Suspected PII exposure, wrong-person contact after opt-out, or leaked staff token: agent gathers evidence (queries above, log excerpts without PII) and drafts the report; a human rotates `STAFF_API_TOKEN`, notifies, and decides on disclosure.
+Suspected PII exposure, wrong-person contact after opt-out, or leaked staff token: agent gathers evidence (queries above, log excerpts without PII) and drafts the report; a human rotates `STAFF_API_TOKEN` (shared mode) or disables the account and resets passwords (users mode: `node src/staff-cli.mjs disable <email>`, `set-password <email>`; both revoke sessions at once), notifies, and decides on disclosure.
 
 ## Known limits (not defects)
-Single shared staff token (no per-user identity); single outbox worker; calendar-minute SLAs; no bot challenge beyond honeypot and rate limit (Turnstile keys pending); email/SMS sending does not exist yet, so the opt-out rule is enforced in data, not yet in a sender.
+Per-user staff login exists (`STAFF_AUTH_MODE=users`: scrypt passwords, 12 h sessions, 60 min idle, 5-failure lockout, roles staff/approver/admin, `staff_auth_events` audit); shared-token mode remains the default until switched, and has no per-user identity. No MFA or SSO yet, no password reset by email (an admin or the CLI resets it); single outbox worker; calendar-minute SLAs; no bot challenge beyond honeypot and rate limit (Turnstile keys pending); email/SMS sending does not exist yet, so the opt-out rule is enforced in data, not yet in a sender.
 
 ## Chat agent (added with the wiring)
 Start: set `LLM_PROVIDER=ollama`, `OLLAMA_MODEL`, `CORS_ORIGINS`; run `npm run catalog:sync` from a production site build; build the site with `PUBLIC_CHAT_API=<api url>`. Startup log says `chat agent enabled (model ...; N services, M ZIPs in catalog)` or `chat agent disabled`.

@@ -20,7 +20,10 @@ export function loadConfig(env) {
   const need = (name, ok, msg) => { if (!ok) problems.push(`${name}: ${msg}`); };
 
   need("DATABASE_URL", !!env.DATABASE_URL, "required");
-  need("STAFF_API_TOKEN", !!env.STAFF_API_TOKEN && env.STAFF_API_TOKEN.length >= 32, "required, at least 32 characters");
+  const staffMode = (env.STAFF_AUTH_MODE ?? "shared").trim();
+  need("STAFF_AUTH_MODE", ["shared", "users"].includes(staffMode), `must be "shared" or "users" (got "${staffMode}")`);
+  // The shared token is only used (and only required) in shared mode; in users mode it is ignored entirely.
+  if (staffMode === "shared") need("STAFF_API_TOKEN", !!env.STAFF_API_TOKEN && env.STAFF_API_TOKEN.length >= 32, "required in shared mode, at least 32 characters");
 
   let corsOrigins = [];
   try { corsOrigins = parseOrigins(env.CORS_ORIGINS); } catch (e) { problems.push(`CORS_ORIGINS: ${e.message}`); }
@@ -48,7 +51,8 @@ export function loadConfig(env) {
   if (problems.length) throw new Error(`Invalid configuration:\n - ${problems.join("\n - ")}`);
   return {
     databaseUrl: env.DATABASE_URL,
-    staffToken: env.STAFF_API_TOKEN,
+    staffToken: staffMode === "shared" ? env.STAFF_API_TOKEN : null,
+    staffMode,
     port,
     host: env.HOST ?? "127.0.0.1",
     trustProxy: env.TRUST_PROXY === "1",

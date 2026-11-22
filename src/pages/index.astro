@@ -14,6 +14,7 @@ import { buildLocalBusiness } from "../lib/jsonld.mjs";
 const siteUrl = (Astro.site ?? new URL("http://localhost")).origin;
 const ld = buildLocalBusiness(business, activeAreas, siteUrl);
 const showPending = isPlaceholderBuild || isFixtureBuild;
+const region = business.serviceRegion ? ` in ${business.serviceRegion}` : "";
 const licences = business.licenseNumbers?.length ? business.licenseNumbers.join(", ") : null;
 const freeEstimate = services.some((s) => s.pricing.kind === "free-estimate");
 const steps = [
@@ -23,14 +24,14 @@ const steps = [
 ];
 ---
 <Base
-  title="Heating and cooling service for homes and commercial buildings"
-  description="Check whether we serve your ZIP code, see what each service involves and what drives its price, then request an estimate or book a service call."
+  title={`Heating and cooling service for homes and commercial buildings${region}`}
+  description={`Heating and cooling service${region}. Check whether we serve your ZIP code, see what each service involves and what drives its price, then request an estimate or book a service call.`}
   jsonld={ld ? [ld] : []}
 >
   <!-- 1. Hero -->
   <section class="wrap hero hero-reveal" aria-labelledby="hero-title">
     <div class="copy stack">
-      <h1 id="hero-title" class="heading-1 measure">Heating and cooling help for homes and commercial buildings.</h1>
+      <h1 id="hero-title" class="heading-1 measure">Heating and cooling help for homes and commercial buildings{region}.</h1>
       <p class="body-3 measure sub">Enter your ZIP code to see whether we serve your area, then request an estimate or book a service call.</p>
       <CoverageForm idSuffix="hero" />
       <p class="proof body-5">

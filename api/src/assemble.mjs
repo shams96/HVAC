@@ -23,7 +23,7 @@ export function assembleDeps(cfg, { env = {}, catalog = null, makeLlm = createOl
     const live = configuredPlatforms(publishers);
     socialDeps = { catalog: cat, publishers };
     notes.push(`social publishing enabled (staff routes under /api/staff/social); platforms able to publish: ${live.length ? live.join(", ") : "none, every publish will be refused with 503 until an adapter is registered"}`);
-    warnings.push("social approvals rely on the shared staff token: the approver identity is asserted by the token holder, so two-person control is not enforced until per-user staff login exists");
+    if (cfg.staffMode !== "users") warnings.push("social approvals rely on the shared staff token: the approver identity is asserted by the token holder, so two-person control is not enforced until STAFF_AUTH_MODE=users");
     if (!cat.business.phoneE164 && !cat.services.length) warnings.push("the catalog is empty, so posts containing any price or phone number will be refused by the content policy");
   } else {
     notes.push("social publishing disabled: set SOCIAL_ENABLED=1 to enable it");

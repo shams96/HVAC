@@ -11,15 +11,16 @@ The production build refuses to emit until the first four exist (`src/data/busin
 - [ ] Legal business name
 - [ ] Phone, display and E.164 form (for example `(555) 010-0100` and `+15555550100`)
 - [ ] Booking URL (a real page or scheduler link)
-- [ ] Street address, city, state, ZIP (the public NAP; also feeds schema and Google Business Profile)
-- [ ] State licence number(s), and contractor licence number if separate
-- [ ] Business hours, including whether emergency service is 24/7
-- [ ] Country confirmed (assumed US)
+- [ ] Street address, city, ZIP (the public NAP; also feeds schema and Google Business Profile). State is already set to TX and region to "the Dallas and Fort Worth area" from your 2026-11-22 message; which city is the branch?
+- [ ] Texas air conditioning and refrigeration contractor licence number(s) (issued by the Texas Department of Licensing and Regulation, TDLR; inferred, please confirm the exact licence type and that it must appear on the site and ads), plus any local city registrations
+- [ ] Business hours (Central time is already set), including whether emergency service is 24/7
+- [ ] Country confirmed (US, now implied by Texas)
 - [ ] Logo and favicon files (SVG preferred)
 
 ## B. Service catalog (blocks content pages and the chat agent)
 
-- [ ] Service area: every ZIP you serve, grouped into travel bands (core, extended, by request)
+- [ ] Service area: which DFW cities and counties you serve (for example Dallas, Tarrant, Collin, Denton), then I build the ZIP list from an official source and you confirm it, grouped into travel bands (core, extended, by request). Branch location decides the bands.
+- [ ] Spanish: do you want a Spanish version or Spanish chat replies? (Large share of DFW customers; this is a decision, not assumed.)
 - [ ] Service lines, residential and commercial (install, repair, maintenance, emergency, and so on)
 - [ ] Approved prices or price ranges per service, or an explicit "no public prices" decision (nothing is quoted without approval)
 - [ ] Which services are not offered, so the agent can decline them
@@ -50,7 +51,8 @@ The production build refuses to emit until the first four exist (`src/data/busin
 - [ ] Approved privacy policy and terms text (the current pages are drafts, not legal advice)
 - [ ] Attorney review of chat-agent disclosures and any AI-generated-answer disclaimer
 - [ ] Decision on double opt-in for chat consent (recommended; prevents consent being given for someone else's number)
-- [ ] Approved emergency wording (gas smell, carbon monoxide, no heat in freezing weather)
+- [ ] Approved emergency wording (gas smell, carbon monoxide, no heat in freezing weather, and no cooling during extreme summer heat, which matters in Texas for elderly or medically vulnerable residents)
+- [ ] Texas items for the attorney to confirm (inferred, not verified here): Texas Data Privacy and Security Act (TDPSA) applicability, federal TCPA rules for SMS and calls, Texas telemarketing registration rules if you do outbound calls or texts, and any TDLR advertising requirements
 
 ## F. Chat agent (Phase 4)
 
@@ -62,7 +64,8 @@ The production build refuses to emit until the first four exist (`src/data/busin
 
 - [ ] Staff identity provider (Google Workspace, Microsoft, or other) so each person has their own login
 - [ ] Names of the people who may approve social posts, and whether a second approver is required
-- [ ] Build item for me: per-user staff login (the shared staff token cannot enforce two-person approval)
+- [x] Per-user staff login is built (`STAFF_AUTH_MODE=users`). Remaining for you: create the first admin on the server, set `STAFF_AUTH_MODE=users` in production, and decide whether to add SSO or MFA later
+- [ ] Roles: who is staff, who is approver, who is admin
 
 ## H. Social publishing (stays off until adapters exist)
 

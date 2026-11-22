@@ -1,7 +1,8 @@
 import Fastify from "fastify";
 import rateLimit from "@fastify/rate-limit";
 import cors from "@fastify/cors";
-import { requireStaff } from "./auth.mjs";
+import { createStaffAuth } from "./auth.mjs";
+import { registerAuthRoutes } from "./auth-routes.mjs";
 import { registerAgentRoutes } from "./agent/routes.mjs";
 import { registerSocialRoutes } from "./social/routes.mjs";
 import { createLead, transitionLead, getLead, optOut, addSite, addAgreement, PipelineError } from "./repo/leads.mjs";
@@ -46,7 +47,8 @@ const actorSchema = {
   properties: { type: { enum: ["user", "system", "agent", "webhook"] }, id: { type: "string", minLength: 1, maxLength: 64 } },
 };
 
-export async function buildServer({ db, staffToken, now = () => new Date(), sla, logger = false, intakeLimit = 10, trustProxy = false, agentDeps = null, socialDeps = null, corsOrigins = [] }) {
+export async function buildServer({ db, staffToken, now = () => new Date(), sla, logger = false, intakeLimit = 10, trustProxy = false, agentDeps = null, socialDeps = null, corsOrigins = [], staffMode = "shared", scryptN }) {
+  const staffAuth = createStaffAuth({ db, staffToken, mode: staffMode, now, scryptN });
   const app = Fastify({ logger: logger ? { level: "info", redact: ["req.headers.authorization"] } : false, bodyLimit: 64 * 1024, trustProxy });
   await app.register(rateLimit, { global: true, max: 120, timeWindow: "1 minute" });
   // Browser access from the website only (exact origins). The Authorization header is not allowed cross-origin, so
@@ -78,9 +80,11 @@ export async function buildServer({ db, staffToken, now = () => new Date(), sla,
     return reply.code(200).send({ ok: true }); // same answer whether or not we knew them
   });
 
-  // ---- staff (shared bearer token for now; per-user auth is an open item) ----
+  // ---- staff (shared token in STAFF_AUTH_MODE=shared, per-user sessions in =users) ----
+  app.decorate("staffAuth", staffAuth);
+  if (staffAuth.mode === "users") await registerAuthRoutes(app, { staffAuth });
   await app.register(async (staff) => {
-    staff.addHook("onRequest", requireStaff(staffToken));
+    staff.addHook("onRequest", staffAuth.guard);
 
     staff.post("/leads", { schema: { body: leadBody(["call", "form", "booking", "chat"]) } }, async (req, reply) => {
       const r = await createLead(db, req.body, { now: now(), sla });
@@ -93,8 +97,8 @@ export async function buildServer({ db, staffToken, now = () => new Date(), sla,
     });
 
     staff.post("/leads/:id/transition", {
-      schema: { params: idParams, body: { type: "object", additionalProperties: false, required: ["to", "actor"], properties: { to: { type: "string", maxLength: 20 }, reason: { type: "string", maxLength: 500 }, actor: actorSchema } } },
-    }, async (req) => transitionLead(db, req.params.id, req.body.to, req.body.actor, { reason: req.body.reason, now: now() }));
+      schema: { params: idParams, body: { type: "object", additionalProperties: false, required: ["to"], properties: { to: { type: "string", maxLength: 20 }, reason: { type: "string", maxLength: 500 }, actor: actorSchema } } },
+    }, async (req) => transitionLead(db, req.params.id, req.body.to, staffAuth.actor(req, req.body.actor), { reason: req.body.reason, now: now() }));
 
     staff.post("/accounts/:id/sites", { schema: { params: idParams, body: siteSchema } }, async (req, reply) =>
       reply.code(201).send({ id: await addSite(db, req.params.id, req.body, now()) }));
@@ -115,7 +119,7 @@ export async function buildServer({ db, staffToken, now = () => new Date(), sla,
     const agent = await registerAgentRoutes(app, { db, now, sla, ...agentDeps });
     if (agent) app.decorate("agent", agent); // used by background jobs (expire stale proposals)
   }
-  if (socialDeps) await registerSocialRoutes(app, { db, now, staffGuard: requireStaff(staffToken), ...socialDeps });
+  if (socialDeps) await registerSocialRoutes(app, { db, now, staffAuth, ...socialDeps });
 
   return app;
 }
