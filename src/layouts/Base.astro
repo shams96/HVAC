@@ -6,6 +6,7 @@ import "../styles/global.css";
 import Icon from "../components/Icon.astro";
 import ChatWidget from "../components/ChatWidget.astro";
 import { business, isPlaceholderBuild, isFixtureBuild } from "../data/business";
+import { counties } from "../data/dfw-coverage";
 
 interface Props {
   title: string;
@@ -40,15 +41,17 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     {/* Empty icon until the owner supplies a brand favicon; avoids a /favicon.ico 404. */}
     <link rel="icon" href="data:," />
     {(isPlaceholderBuild || isFixtureBuild || noindex) && <meta name="robots" content="noindex, nofollow" />}
+    <script is:inline>document.documentElement.classList.add("js");</script>
     {ldJson.map((j) => <script type="application/ld+json" set:html={j} />)}
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="bar">
-        <a class="brand" href="/" aria-current={path === "/" ? "page" : undefined}>{business.legalName ?? "Company name pending"}</a>
+        <a class="brand" href="/" aria-current={path === "/" ? "page" : undefined}><span class="brand-mark"><Icon name="fan" /></span>{business.legalName ?? "Company name pending"}</a>
         <nav aria-label="Primary">
           <a href="/#services">Services</a>
+          <a href="/#how">How it works</a>
           <a href="/service-area/" aria-current={current("/service-area/")}>Service area</a>
         </nav>
         <div class="actions">
@@ -58,18 +61,34 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
       </div>
     </header>
     <main id="main"><slot /></main>
-    <footer class="site-footer">
+    <footer class="site-footer band-ink">
       <div class="inner">
         <div>
-          <p class="body-1">{business.legalName ?? "Company name pending"}</p>
+          <p class="title-1">{business.legalName ?? "Company name pending"}</p>
+          <p class="body-6 muted">Heating and cooling for homes and commercial buildings{business.serviceRegion ? ` in ${business.serviceRegion}` : ""}.</p>
           {business.streetAddress && <p class="body-6">{business.streetAddress}, {business.city}, {business.state} {business.postalCode}</p>}
           {business.hours && <p class="body-6">{business.hours}</p>}
         </div>
-        <ul class="body-5" aria-label="Legal">
-          <li><a href="/privacy/">Privacy policy</a></li>
-          <li><a href="/terms/">Terms</a></li>
-          <li><a href="#main">Back to top</a></li>
-        </ul>
+        <nav aria-label="Footer">
+          <h2>Explore</h2>
+          <ul class="body-5">
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#how">How it works</a></li>
+            <li><a href="/service-area/">Service area</a></li>
+            <li><a href="/privacy/">Privacy policy</a></li>
+            <li><a href="/terms/">Terms</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h2>Where we work</h2>
+          <ul class="body-5">
+            {counties.map((c) => <li><a href="/service-area/">{c.name} County</a></li>)}
+          </ul>
+        </div>
+        <div class="fine caption-2">
+          <p>Photos on this site are illustrative stock images. They are not our team or our completed work.</p>
+          <p><a href="#main">Back to top</a></p>
+        </div>
       </div>
     </footer>
     {chatApi && <ChatWidget api={chatApi} />}
@@ -78,5 +97,22 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
       {tel ? <a class="btn" href={tel}><Icon name="phone" />Call {business.phoneDisplay}</a> : <span class="btn btn-pending"><Icon name="phone" />Phone pending</span>}
       {book ? <a class="btn" href={book}><Icon name="calendar-check" />Book</a> : <span class="btn btn-pending"><Icon name="calendar-check" />Booking pending</span>}
     </div>
+  <script is:inline>
+    (function () {
+      var d = document.documentElement;
+      var onScroll = function () { d.classList.toggle("is-scrolled", window.scrollY > 8); };
+      window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+      var items = document.querySelectorAll("[data-reveal], .tag-word");
+      if (!("IntersectionObserver" in window)) { items.forEach(function (n) { n.classList.add(n.classList.contains("tag-word") ? "on" : "in"); }); return; }
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add(e.target.classList.contains("tag-word") ? "on" : "in");
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: "0px 0px -15% 0px", threshold: 0.05 });
+      items.forEach(function (n) { io.observe(n); });
+    })();
+  </script>
   </body>
 </html>

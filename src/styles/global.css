@@ -72,7 +72,7 @@ a { color: var(--color-primary); }
 .site-footer { background: var(--color-primary); color: var(--color-surface); padding: var(--space-400) var(--gutter); }
 .site-footer a { color: var(--color-surface); }
 .site-footer .inner { max-width: var(--content-max); margin: 0 auto; display: flex; flex-wrap: wrap; gap: var(--space-200) var(--space-400); justify-content: space-between; }
-.site-footer ul { list-style: none; display: flex; gap: var(--space-300); flex-wrap: wrap; }
+.site-footer ul { list-style: none; }
 
 @media (min-width: 48rem) {
   .bar nav, .actions { display: flex; }
@@ -90,3 +90,56 @@ a { color: var(--color-primary); }
   .hero-reveal { animation: fade 400ms var(--ease) both; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 }
+
+/* =====================================================================================================
+   Redesign layer (spec 07): rhythm bands, cards, eyebrow labels, scroll reveals, tagline reveal, footer.
+   Transform and opacity only for motion. Every motion rule is gated by prefers-reduced-motion.
+   ===================================================================================================== */
+.band-ink { background: var(--color-ink); color: var(--color-on-dark); }
+.band-ink a { color: var(--color-on-dark); }
+.band-ink .muted { color: var(--color-on-dark-muted); }
+.band-ink .btn, .band-brand .btn { box-shadow: 0 0 0 var(--border-strong) var(--color-on-dark); }
+
+.eyebrow { display: inline-flex; align-items: center; gap: var(--space-75); margin: 0 0 var(--space-100); color: var(--color-primary); font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; }
+.band-ink .eyebrow, .band-brand .eyebrow { color: var(--color-on-dark-muted); }
+.lede { max-width: 38rem; color: var(--color-ink-muted); }
+.band-ink .lede, .band-brand .lede { color: var(--color-on-dark-muted); }
+.section-head { display: grid; gap: var(--space-100); margin-bottom: var(--space-500); max-width: 44rem; }
+.section-head p { margin: 0; }
+
+.card { background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-2xl); box-shadow: var(--shadow-1); }
+.chip { display: inline-flex; align-items: center; gap: var(--space-75); padding: var(--space-50) var(--space-100); background: var(--color-surface); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-full); color: var(--color-ink); font: var(--weight-medium) var(--text-sm) / var(--lh-sm) var(--font-body); }
+.photo-frame { position: relative; overflow: hidden; border-radius: var(--radius-3xl); background: var(--color-rule); }
+.photo-frame .photo { transition: transform var(--dur-layout) var(--ease); }
+
+/* Cards that lift on hover. Keyboard focus inside gets the same lift so it is not mouse only. */
+.lift { transition: transform var(--dur-layout) var(--ease), box-shadow var(--dur-layout) var(--ease); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift:hover, .lift:focus-within { transform: translateY(calc(-1 * var(--space-50))); box-shadow: var(--shadow-2); }
+  .lift:hover .photo-frame .photo, .lift:focus-within .photo-frame .photo { transform: scale(1.04); }
+}
+
+/* Scroll reveals: content stays visible without JavaScript, and under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] { opacity: 0; transform: translateY(var(--space-400)); transition: opacity 700ms var(--ease), transform 700ms var(--ease); transition-delay: calc(var(--i, 0) * 80ms); }
+  .js [data-reveal].in { opacity: 1; transform: none; }
+  .js .tag-word { opacity: 0.6; /* muted state still clears 4.5:1 on the dark band */ transition: opacity 600ms var(--ease); }
+  .js .tag-word.on { opacity: 1; }
+}
+
+/* Header gains weight once the page scrolls. */
+.bar { transition: box-shadow var(--dur-color) var(--ease); }
+.is-scrolled .bar { box-shadow: var(--shadow-2); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-75); }
+.brand-mark { display: inline-flex; align-items: center; justify-content: center; inline-size: 2rem; block-size: 2rem; border-radius: var(--radius-lg); background: var(--color-primary); color: var(--color-on-dark); }
+.brand-mark .icon { inline-size: 1.25rem; block-size: 1.25rem; }
+
+/* Footer: three columns on wide screens. */
+.site-footer { padding: var(--space-600) var(--gutter) var(--space-400); }
+.site-footer .inner { display: grid; gap: var(--space-500); justify-content: stretch; }
+.site-footer h2 { margin: 0 0 var(--space-100); color: var(--color-on-dark-muted); font: var(--weight-semibold) var(--text-sm) / var(--lh-sm) var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; }
+.site-footer ul { display: grid; gap: var(--space-75); }
+.site-footer a { text-underline-offset: var(--space-50); }
+.site-footer .fine { grid-column: 1 / -1; padding-top: var(--space-300); border-top: var(--border-thin) solid var(--color-on-dark-muted); color: var(--color-on-dark-muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-100); }
+.site-footer .fine p { margin: 0; max-width: none; }
+@media (min-width: 48rem) { .site-footer .inner { grid-template-columns: 1.4fr 1fr 1fr; } }

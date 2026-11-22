@@ -2,7 +2,7 @@
 // Phosphor icons (MIT), inlined as SVG. Decorative by default; pass `label` to expose to assistive tech.
 interface Props { name: string; label?: string }
 const files = import.meta.glob(
-  "/node_modules/@phosphor-icons/core/assets/regular/{phone,calendar-check,map-pin,wrench,list-checks,chat-circle-text,shield-check}.svg",
+  "/node_modules/@phosphor-icons/core/assets/regular/{phone,calendar-check,map-pin,wrench,list-checks,chat-circle-text,shield-check,snowflake,flame,thermometer-hot,fan,house-line,buildings,clock,users-three,seal-check,arrow-right,check-circle,map-trifold,handshake,certificate,ruler,wind}.svg",
   { query: "?raw", import: "default", eager: true }
 ) as Record<string, string>;
 const { name, label } = Astro.props;

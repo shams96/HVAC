@@ -1,28 +1,46 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import CoverageForm from "../../components/CoverageForm.astro";
 import ServiceAreaBands from "../../components/ServiceAreaBands.astro";
 import { activeAreas } from "../../data/service-areas";
 import { services } from "../../data/services";
+import { counties, totalZips } from "../../data/dfw-coverage";
+import { business, isPlaceholderBuild, isFixtureBuild } from "../../data/business";
 
 const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? slug;
+const showPending = isPlaceholderBuild || isFixtureBuild;
+const region = business.serviceRegion ?? "the Dallas and Fort Worth area";
 ---
-<Base title="Service area" description="ZIP codes and cities we serve, with travel-time bands and the services offered in each.">
+<Base title={`Service area: ${region}`} description={`The cities, counties and ${totalZips} ZIP codes we list in ${region}. Check your ZIP code for an instant answer.`}>
   <section class="wrap">
-    <h1 class="heading-2">Service area</h1>
-    {activeAreas.length === 0 ? (
-      <p>Service area pending: the owner has not yet supplied the ZIP list.</p>
-    ) : (
-      <>
-        <p>We serve the ZIP codes below. Enter yours to jump to its page.</p>
-        <form id="zip-lookup" class="zip" method="get">
-          <label for="zip">Your ZIP code</label>
-          <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" />
-          <button type="submit" class="btn">Check coverage</button>
-        </form>
-        <p id="zip-miss" hidden>That ZIP code is not in our listed service area. Call us to confirm.</p>
+    <div class="intro stack">
+      <p class="eyebrow"><Icon name="map-trifold" /> Service area</p>
+      <h1 class="heading-2">We serve {region}</h1>
+      <p class="body-3 lede">Four counties: {counties.map((c) => c.name).join(", ")}. Enter your ZIP code for an instant answer, or find it in the lists below.</p>
+      <CoverageForm idSuffix="area" />
+    </div>
 
+    <div class="counties">
+      {counties.map((c) => (
+        <section class="card county" aria-labelledby={`c-${c.name}`}>
+          <h2 id={`c-${c.name}`} class="heading-5">{c.name} County</h2>
+          <p class="body-6 cities">{c.cities.join(", ")}.</p>
+          <details>
+            <summary class="body-1">All {c.zips.length} ZIP codes</summary>
+            <ul class="zips">{c.zips.map((z) => <li class="chip">{z}</li>)}</ul>
+          </details>
+        </section>
+      ))}
+    </div>
+    <p class="body-6 fine">City names are for orientation and are not a promise of service to every street. ZIP codes are US Census ZIP code tabulation areas with at least half their land in these counties, so a few postal ZIP codes at the edge may differ. Contact us to confirm an address near the border.</p>
+    {showPending && <p class="pending">Coverage follows the stated area. Edge ZIP codes need the owner's confirmation.</p>}
+
+    {activeAreas.length > 0 && (
+      <>
+        <h2 class="heading-4 sub">ZIP codes with local detail pages</h2>
         <table>
-          <caption class="sr">Active service ZIP codes</caption>
+          <caption class="sr">ZIP codes with a local detail page</caption>
           <thead><tr><th scope="col">ZIP</th><th scope="col">City</th><th scope="col">Travel time</th><th scope="col">Services</th></tr></thead>
           <tbody>
             {activeAreas.map((a) => (
@@ -35,32 +53,27 @@ const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? 
             ))}
           </tbody>
         </table>
-
-        <h2 class="heading-4">Coverage by travel time</h2>
+        <h2 class="heading-4 sub">Coverage by travel time</h2>
         <ServiceAreaBands areas={activeAreas} />
       </>
     )}
   </section>
-
-  <script is:inline>
-    // Progressive enhancement only: jump to a ZIP page when ?zip= matches. Content above renders without JS.
-    (function () {
-      var z = new URLSearchParams(location.search).get("zip");
-      if (!z || !/^\d{5}$/.test(z)) return;
-      var a = document.querySelector('a[data-zip="' + z + '"]');
-      if (a) location.replace(a.getAttribute("href"));
-      else { var m = document.getElementById("zip-miss"); if (m) m.hidden = false; }
-    })();
-  </script>
 </Base>
 
 <style>
   .sr { position: absolute; left: -999rem; }
-  table { width: var(--layout-full); border-collapse: collapse; margin: var(--space-4) 0 var(--space-5); }
-  th, td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: var(--border-thin) solid var(--color-rule); }
+  .intro { max-width: 40rem; margin-bottom: var(--space-600); }
+  .lede { color: var(--color-ink-muted); }
+  .counties { display: grid; gap: var(--space-300); }
+  .county { padding: var(--space-400); display: grid; gap: var(--space-100); align-content: start; }
+  .county p { margin: 0; }
+  .cities { color: var(--color-ink-muted); }
+  summary { cursor: pointer; padding: var(--space-75) 0; color: var(--color-primary); }
+  .zips { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-75); padding-top: var(--space-100); }
+  .fine { margin-top: var(--space-400); color: var(--color-ink-muted); }
+  .sub { margin-top: var(--space-600); }
+  table { width: var(--layout-full); border-collapse: collapse; margin: var(--space-300) 0 var(--space-500); }
+  th, td { text-align: left; padding: var(--space-75) var(--space-200); border-bottom: var(--border-thin) solid var(--color-rule); }
   thead th { border-bottom: var(--border-strong) solid var(--color-primary); }
-  .zip { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: end; margin: var(--space-3) 0; }
-  .zip label { flex-basis: var(--layout-full); font-weight: 600; }
-  .zip input { min-height: var(--touch-min); padding: 0 var(--space-3); font: inherit; color: var(--color-ink); background: var(--color-surface-raised); border: var(--border-thin) solid var(--color-ink-muted); border-radius: var(--radius); width: 9rem; }
-  .zip .btn { border: 0; cursor: pointer; font: inherit; font-weight: 600; box-shadow: none; }
+  @media (min-width: 48rem) { .counties { grid-template-columns: repeat(2, 1fr); } }
 </style>

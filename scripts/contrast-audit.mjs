@@ -11,6 +11,11 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
 
 // [foreground token, background token, minimum ratio, role]
 const pairs = [
+  ["color-on-dark", "color-ink", 4.5, "text on dark band"],
+  ["color-on-dark-muted", "color-ink", 4.5, "muted text on dark band"],
+  ["color-on-dark", "color-primary", 4.5, "text on teal band"],
+  ["color-on-dark-muted", "color-primary", 4.5, "muted text on teal band"],
+  ["color-surface-raised", "color-primary", 4.5, "white on teal (step numerals)"],
   ["color-ink", "color-surface", 4.5, "body text"],
   ["color-ink", "color-surface-raised", 4.5, "text on raised panel"],
   ["color-ink-muted", "color-surface", 4.5, "secondary text"],

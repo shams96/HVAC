@@ -1,13 +1,15 @@
 ---
-// Layout A (classic hero plus sections): the visitor's one intent is "do you serve me, and how do I get help".
-// Copy below is DRAFT pending owner approval. No facts are invented: anything that needs a real fact is data driven
-// (src/data/*) and appears only when the owner has supplied it.
+// Layout A (classic hero plus sections), redesigned per spec 07. The visitor's one intent: "do you serve me, and how
+// do I get help". Copy is DRAFT pending owner approval. No facts are invented: anything that needs a real fact is data
+// driven (src/data/*) and appears only when the owner has supplied it. Photos are stock and labelled as such.
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
+import Photo from "../components/Photo.astro";
 import CoverageForm from "../components/CoverageForm.astro";
 import ServiceAreaBands from "../components/ServiceAreaBands.astro";
 import { services } from "../data/services";
 import { activeAreas } from "../data/service-areas";
+import { counties, totalZips } from "../data/dfw-coverage";
 import { business, isPlaceholderBuild, isFixtureBuild } from "../data/business";
 import { buildLocalBusiness } from "../lib/jsonld.mjs";
 
@@ -18,66 +20,137 @@ const region = business.serviceRegion ? ` in ${business.serviceRegion}` : "";
 const licences = business.licenseNumbers?.length ? business.licenseNumbers.join(", ") : null;
 const freeEstimate = services.some((s) => s.pricing.kind === "free-estimate");
 const steps = [
-  { title: "Check your ZIP code", body: "Enter your ZIP code to see whether we serve it and which services we offer there." },
+  { title: "Check your ZIP code", body: "Enter your ZIP code to see whether we serve your area." },
   { title: "Tell us what you need", body: "Describe the problem or ask for an estimate. You can call, book, or use the form." },
   { title: "We confirm the details with you", body: "A person confirms the details with you before any visit is scheduled." },
 ];
+const audiences = [
+  {
+    icon: "house-line", title: "For homes", photo: "32497161", w: 1600, h: 930, pos: "50% 30%",
+    alt: "A technician inspecting an outdoor air conditioning unit beside a house (stock photo)",
+    body: "Repair, replacement and seasonal checks for the heating and cooling that keep a house comfortable.",
+    tags: ["Repair", "Replacement", "Seasonal checks"],
+  },
+  {
+    icon: "buildings", title: "For commercial buildings", photo: "5463587", w: 1600, h: 1322, pos: "50% 40%",
+    alt: "A technician servicing a rooftop air conditioning unit (stock photo)",
+    body: "Service and upkeep for offices, retail spaces and property managers who need systems that keep running.",
+    tags: ["Service calls", "Maintenance", "Replacement planning"],
+  },
+];
+const tagline = "Clear scope. Clear price drivers. A person confirms the details before anything is scheduled.";
+const words = tagline.split(" ");
 ---
 <Base
   title={`Heating and cooling service for homes and commercial buildings${region}`}
   description={`Heating and cooling service${region}. Check whether we serve your ZIP code, see what each service involves and what drives its price, then request an estimate or book a service call.`}
   jsonld={ld ? [ld] : []}
 >
-  <!-- 1. Hero -->
-  <section class="wrap hero hero-reveal" aria-labelledby="hero-title">
-    <div class="copy stack">
-      <h1 id="hero-title" class="heading-1 measure">Heating and cooling help for homes and commercial buildings{region}.</h1>
-      <p class="body-3 measure sub">Enter your ZIP code to see whether we serve your area, then request an estimate or book a service call.</p>
+  <!-- 1. Hero: copy and the one primary action on the left, photograph with proof cards on the right -->
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div class="copy stack hero-reveal">
+      <p class="eyebrow"><Icon name="map-pin" /> Dallas and Fort Worth</p>
+      <h1 id="hero-title" class="heading-1 measure">Heating and cooling for homes and commercial buildings{region}.</h1>
+      <p class="body-3 measure sub">Enter your ZIP code to see whether we serve your area, then request an estimate or book a service call. A person confirms the details before anything is scheduled.</p>
       <CoverageForm idSuffix="hero" />
-      <p class="proof body-5">
-        {licences ? <><Icon name="shield-check" /> Licence: {licences}</> : showPending && <span class="pending">{"{{licence and insurance proof}}"}</span>}
-      </p>
+      <ul class="proof body-5" aria-label="At a glance">
+        <li><Icon name="house-line" /> Homes and commercial buildings</li>
+        <li><Icon name="handshake" /> A person confirms every visit</li>
+        <li>{licences ? <><Icon name="shield-check" /> Licence: {licences}</> : showPending ? <span class="pending">{"{{licence and insurance proof}}"}</span> : null}</li>
+      </ul>
     </div>
-    <div class="visual" aria-label="Service coverage by travel time">
-      <ServiceAreaBands areas={activeAreas} compact />
+    <div class="photo-frame hero-photo hero-reveal">
+      <Photo id="34558045" w={1600} h={1067} eager position="74% 50%" sizes="(min-width: 64rem) 46vw, 100vw"
+        alt="A technician checking a wall thermostat inside a bright home (stock photo)" />
+      <div class="float float-a card"><Icon name="clock" /><div><p class="title-4">Clear next steps</p><p class="body-6">Check your ZIP, then ask for an estimate.</p></div></div>
+      <div class="float float-b card"><Icon name="map-pin" /><div><p class="title-4">{counties.length} counties</p><p class="body-6">Dallas, Tarrant, Collin and Denton</p></div></div>
     </div>
   </section>
 
-  <!-- 2. Services -->
-  <div class="full-bleed band-raised">
-    <section id="services" class="wrap" aria-labelledby="services-title">
-      <h2 id="services-title" class="heading-2">What we help with</h2>
-      {services.length === 0 ? (
-        showPending && <p class="pending">{"{{service lines, approved by the owner}}"}</p>
-      ) : (
-        <ul class="rows">
-          {services.map((s) => (
-            <li>
-              <Icon name="wrench" />
-              <div>
-                <h3 class="title-1">{s.name}</h3>
-                <p class="body-3">{s.directAnswer}</p>
-              </div>
-              <a class="body-4" href={`/services/${s.slug}/`}>See scope and price drivers<span class="sr-only"> for {s.name}</span></a>
-            </li>
-          ))}
-        </ul>
-      )}
+  <!-- 2. Who we help (and service rows once the owner approves real services) -->
+  <section id="services" class="wrap" aria-labelledby="services-title">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow"><Icon name="wrench" /> What we do</p>
+      <h2 id="services-title" class="heading-2">Service for homes and commercial buildings</h2>
+      <p class="body-3 lede">Tell us which one you are and we will point you to the right next step.</p>
+    </div>
+    <div class="audience">
+      {audiences.map((a, i) => (
+        <article class="card lift aud" data-reveal style={`--i:${i}`}>
+          <div class="photo-frame aud-photo"><Photo id={a.photo} w={a.w} h={a.h} alt={a.alt} position={a.pos} sizes="(min-width: 48rem) 45vw, 100vw" /></div>
+          <div class="aud-body stack">
+            <h3 class="heading-5 aud-title"><Icon name={a.icon} /> {a.title}</h3>
+            <p class="body-3">{a.body}</p>
+            <ul class="tags" aria-label={`${a.title}: examples`}>{a.tags.map((t) => <li class="chip">{t}</li>)}</ul>
+            <a class="body-1 more" href="#coverage">Check your ZIP code <Icon name="arrow-right" /></a>
+          </div>
+        </article>
+      ))}
+    </div>
+    {services.length > 0 ? (
+      <ul class="rows" data-reveal>
+        {services.map((s) => (
+          <li>
+            <Icon name="wrench" />
+            <div>
+              <h3 class="title-1">{s.name}</h3>
+              <p class="body-3">{s.directAnswer}</p>
+            </div>
+            <a class="body-4" href={`/services/${s.slug}/`}>See scope and price drivers<span class="sr-only"> for {s.name}</span></a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      showPending && <p class="pending note">{"{{approved service list and prices}}"}</p>
+    )}
+  </section>
+
+  <!-- 3. Where we work: the stated area (Dallas, Tarrant, Collin and Denton counties) -->
+  <div class="full-bleed band-white">
+    <section id="coverage" class="wrap" aria-labelledby="area-title">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow"><Icon name="map-trifold" /> Where we work</p>
+        <h2 id="area-title" class="heading-2">Serving the Dallas and Fort Worth area</h2>
+        <p class="body-3 lede">We list {totalZips} ZIP codes across four counties. Check yours, or browse the cities below.</p>
+      </div>
+      <div class="counties">
+        {counties.map((c, i) => (
+          <article class="card lift county" data-reveal style={`--i:${i}`}>
+            <p class="eyebrow county-count"><Icon name="map-pin" /> {c.zips.length} ZIP codes</p>
+            <h3 class="heading-5">{c.name} County</h3>
+            <p class="body-6 cities">{c.cities.join(", ")}.</p>
+          </article>
+        ))}
+      </div>
+      <p class="area-link"><a class="body-1" href="/service-area/">See every ZIP code we list <Icon name="arrow-right" /></a></p>
+      {activeAreas.length > 0 && <div class="bands" data-reveal><ServiceAreaBands areas={activeAreas} compact /></div>}
+      {showPending && <p class="pending note">Coverage follows the stated area. Edge ZIP codes need the owner's confirmation.</p>}
     </section>
   </div>
 
-  <!-- 3. Tagline (static: the brief allows one orchestrated motion, and the hero reveal is it) -->
-  <section class="wrap tagline" aria-label="Our approach">
-    <p class="heading-2 measure">Clear scope. Clear price drivers. A person confirms the details before anything is scheduled.</p>
-  </section>
+  <!-- 4. Tagline reveal: each word lights up as it crosses the reading line (reduced motion shows it all at once) -->
+  <div class="full-bleed band-ink">
+    <section class="wrap tagline" aria-label="Our approach">
+      <p class="heading-2 measure">
+        {words.map((w, i) => <><span class="tag-word" style={`--i:${i % 8}`}>{w}</span>{" "}</>)}
+      </p>
+    </section>
+  </div>
 
-  <!-- 4. How it works: a true sequence, so numbered -->
-  <div class="full-bleed band-brand">
-    <section class="wrap" aria-labelledby="how-title">
-      <h2 id="how-title" class="heading-2">How it works</h2>
+  <!-- 5. How it works: a true sequence, so numbered -->
+  <section id="how" class="wrap how" aria-labelledby="how-title">
+    <div class="photo-frame how-photo" data-reveal>
+      <Photo id="27638181" w={1600} h={2400} position="50% 45%" sizes="(min-width: 64rem) 30vw, 100vw"
+        alt="A wall mounted thermostat in a modern home (stock photo)" />
+    </div>
+    <div class="how-body">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow"><Icon name="list-checks" /> How it works</p>
+        <h2 id="how-title" class="heading-2">Three steps, no surprises</h2>
+      </div>
       <ol class="steps">
         {steps.map((s, i) => (
-          <li>
+          <li class="card step" data-reveal style={`--i:${i}`}>
             <span class="num title-1" aria-hidden="true">{i + 1}</span>
             <div>
               <h3 class="title-1">{s.title}</h3>
@@ -87,25 +160,12 @@ const steps = [
         ))}
       </ol>
       {freeEstimate && <p class="body-1 risk">Estimates are free.</p>}
-    </section>
-  </div>
-
-  <!-- 5. Service area -->
-  <section id="service-area" class="wrap" aria-labelledby="area-title">
-    <h2 id="area-title" class="heading-2">Where we work</h2>
-    {activeAreas.length === 0 ? (
-      showPending && <p class="pending">{"{{ZIP codes we serve}}"}</p>
-    ) : (
-      <>
-        <p class="body-3">We serve {activeAreas.length} ZIP codes, grouped by travel time from our branch.</p>
-        <p><a class="body-1" href="/service-area/">See every ZIP code we serve</a></p>
-      </>
-    )}
+    </div>
   </section>
 
   <!-- 6. Proof: only real reviews and jobs, never invented. Renders when review data exists. -->
   {showPending && (
-    <div class="full-bleed band-raised">
+    <div class="full-bleed band-white">
       <section class="wrap" aria-labelledby="proof-title">
         <h2 id="proof-title" class="heading-3">What customers say</h2>
         <p class="pending">{"{{reviews captured from an official source, shown with their source}}"}</p>
@@ -116,41 +176,101 @@ const steps = [
   <!-- 7. FAQ: omitted until the owner supplies real customer questions (FAQ markup needs real questions). -->
 
   <!-- 8. Final CTA, same action as the hero -->
-  <div class="full-bleed band-raised">
+  <div class="full-bleed band-brand">
     <section class="wrap final" aria-labelledby="final-title">
-      <h2 id="final-title" class="heading-3">Check whether we serve your ZIP code</h2>
-      <CoverageForm idSuffix="final" />
+      <div class="final-copy stack" data-reveal>
+        <p class="eyebrow"><Icon name="map-pin" /> Start here</p>
+        <h2 id="final-title" class="heading-2">Check whether we serve your ZIP code</h2>
+        <p class="body-3 lede">One field. You get an answer straight away, then choose to call, book or request an estimate.</p>
+        <CoverageForm idSuffix="final" dark />
+      </div>
+      <div class="photo-frame final-photo" data-reveal style="--i:1">
+        <Photo id="12644994" w={1600} h={1063} position="55% 50%" sizes="(min-width: 64rem) 40vw, 100vw"
+          alt="A hand adjusting a radiator thermostat (stock photo)" />
+      </div>
     </section>
   </div>
 </Base>
 
 <style>
-  .hero { display: grid; gap: var(--space-600); align-items: center; padding-block: var(--space-700); }
+  .band-white { background: var(--color-surface-raised); border-block: var(--border-thin) solid var(--color-rule); }
+
+  /* Hero */
+  .hero { display: grid; gap: var(--space-500); align-items: center; padding-block: var(--space-500) var(--space-700); }
   .measure { max-width: var(--measure-hero); }
   .sub { color: var(--color-ink-muted); }
-  .proof { margin: 0; display: flex; align-items: center; gap: var(--space-75); color: var(--color-ink-muted); }
-  /* Nested radius: outer 16px (radius-2xl) with 8px padding gives an inner radius of 8px (radius-lg). */
-  .visual { padding: var(--space-75); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-2xl); background: var(--color-surface-raised); }
-  .visual > :global(*) { border-radius: var(--radius-lg); }
+  .proof { list-style: none; display: grid; gap: var(--space-100); margin-top: var(--space-300); color: var(--color-ink-muted); }
+  .proof li { display: flex; align-items: center; gap: var(--space-75); }
+  .proof :global(.icon) { color: var(--color-primary); }
+  .hero-photo { aspect-ratio: 4 / 3; }
+  .hero-photo :global(.photo) { position: absolute; inset: 0; }
+  .float { position: absolute; display: flex; align-items: flex-start; gap: var(--space-100); padding: var(--space-100) var(--space-200); max-width: 17rem; border-radius: var(--radius-xl); }
+  .float p { margin: 0; }
+  .float :global(.icon) { color: var(--color-primary); margin-top: var(--space-25); }
+  .float-a { display: none; left: var(--space-200); bottom: var(--space-200); }
+  .float-b { display: none; right: var(--space-200); top: var(--space-200); }
 
-  .rows { list-style: none; display: grid; gap: 0; margin-top: var(--space-400); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-xl); background: var(--color-surface-raised); }
+  /* Audiences */
+  .audience { display: grid; gap: var(--space-400); }
+  .aud { overflow: hidden; display: grid; }
+  .aud-photo { aspect-ratio: 16 / 10; border-radius: 0; }
+  .aud-photo :global(.photo) { position: absolute; inset: 0; }
+  .aud-body { padding: var(--space-400); }
+  .aud-title { display: flex; align-items: center; gap: var(--space-100); }
+  .aud-title :global(.icon) { color: var(--color-primary); }
+  .aud-body p { margin: 0; }
+  .tags { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-75); }
+  .more { display: inline-flex; align-items: center; gap: var(--space-75); }
+  .rows { list-style: none; display: grid; margin-top: var(--space-500); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-xl); background: var(--color-surface-raised); }
   .rows li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-200); padding: var(--space-300); align-items: start; }
   .rows li + li { border-top: var(--border-thin) solid var(--color-rule); }
   .rows li > a { grid-column: 2; }
   .rows p { margin: var(--space-50) 0 0; }
+  .note { margin-top: var(--space-300); }
 
+  /* Coverage */
+  .counties { display: grid; gap: var(--space-300); }
+  .county { padding: var(--space-400); display: grid; gap: var(--space-75); align-content: start; background: var(--color-surface); }
+  .county p { margin: 0; }
+  .county-count { margin: 0; }
+  .cities { color: var(--color-ink-muted); }
+  .area-link { margin: var(--space-400) 0 0; }
+  .area-link a { display: inline-flex; align-items: center; gap: var(--space-75); }
+  .bands { margin-top: var(--space-500); }
+
+  /* Tagline */
   .tagline { padding-block: var(--space-800); }
-  .steps { list-style: none; display: grid; gap: var(--space-400); margin-top: var(--space-400); }
-  .steps li { display: grid; grid-template-columns: auto 1fr; gap: var(--space-200); align-items: start; }
-  .steps p { margin: var(--space-50) 0 0; }
-  .num { display: inline-flex; align-items: center; justify-content: center; inline-size: var(--touch-min); block-size: var(--touch-min); border: var(--border-thin) solid var(--color-surface); border-radius: var(--radius-full); }
-  .risk { margin: var(--space-400) 0 0; }
-  .final { display: grid; gap: var(--space-300); }
+  .tagline .measure { max-width: 48rem; }
+  .tag-word { display: inline-block; transition-delay: calc(var(--i, 0) * 50ms); }
 
-  @media (min-width: 64rem) {
-    .hero { grid-template-columns: 1.15fr 0.85fr; }
+  /* How it works */
+  .how { display: grid; gap: var(--space-500); align-items: center; }
+  .how-photo { aspect-ratio: 4 / 3; }
+  .how-photo :global(.photo) { position: absolute; inset: 0; }
+  .steps { list-style: none; display: grid; gap: var(--space-200); }
+  .step { display: grid; grid-template-columns: auto 1fr; gap: var(--space-200); align-items: start; padding: var(--space-300); }
+  .step p { margin: var(--space-50) 0 0; }
+  .num { display: inline-flex; align-items: center; justify-content: center; inline-size: var(--touch-min); block-size: var(--touch-min); border-radius: var(--radius-full); background: var(--color-primary); color: var(--color-on-dark); }
+  .risk { margin: var(--space-400) 0 0; }
+
+  /* Final CTA */
+  .final { display: grid; gap: var(--space-500); align-items: center; }
+  .final-photo { aspect-ratio: 4 / 3; }
+  .final-photo :global(.photo) { position: absolute; inset: 0; }
+
+  @media (min-width: 48rem) {
+    .float-a, .float-b { display: flex; }
+    .audience { grid-template-columns: repeat(2, 1fr); }
+    .counties { grid-template-columns: repeat(2, 1fr); }
     .rows li { grid-template-columns: auto 1fr auto; align-items: center; }
     .rows li > a { grid-column: auto; }
-    .steps { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .hero { grid-template-columns: 1.1fr 0.9fr; gap: var(--space-600); }
+    .hero-photo { aspect-ratio: 4 / 5; }
+    .counties { grid-template-columns: repeat(4, 1fr); }
+    .how { grid-template-columns: 0.8fr 1.2fr; gap: var(--space-700); }
+    .how-photo { aspect-ratio: 3 / 4; }
+    .final { grid-template-columns: 1.1fr 0.9fr; gap: var(--space-700); }
   }
 </style>
