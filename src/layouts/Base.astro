@@ -22,6 +22,8 @@ const ldJson = jsonld.map((j) => JSON.stringify(j).replace(/</g, LT));
 const tel = business.phoneE164 ? `tel:${business.phoneE164}` : null;
 const book = business.bookingUrl;
 const path = Astro.url.pathname;
+const leadsApi = import.meta.env.PUBLIC_LEADS_API; // set only when the lead API is deployed; otherwise no request form link renders
+const hasActions = Boolean(tel || book || leadsApi);
 const chatApi = import.meta.env.PUBLIC_CHAT_API; // set only when the chat API is deployed; otherwise no chat UI renders
 const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
 ---
@@ -55,10 +57,13 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
           <a href="/#how">How it works</a>
           <a href="/service-area/" aria-current={current("/service-area/")}>Service area</a>
         </nav>
-        <div class="actions">
-          {tel ? <a class="btn" href={tel}><Icon name="phone" />{business.phoneDisplay}</a> : <span class="btn btn-pending" role="note"><Icon name="phone" />Phone pending</span>}
-          {book ? <a class="btn" href={book}><Icon name="calendar-check" />Book service</a> : <span class="btn btn-pending" role="note"><Icon name="calendar-check" />Booking pending</span>}
-        </div>
+        {hasActions && (
+          <div class="actions">
+            {tel && <a class="btn" href={tel}><Icon name="phone" />{business.phoneDisplay}</a>}
+            {leadsApi && <a class="btn" href="/request/" aria-current={current("/request/")}><Icon name="note-pencil" />Request service</a>}
+            {book && <a class="btn" href={book} rel="noopener"><Icon name="calendar-check" />Book service</a>}
+          </div>
+        )}
       </div>
     </header>
     <main id="main"><slot /></main>
@@ -94,10 +99,13 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     </footer>
     {chatApi && <ChatWidget api={chatApi} />}
     {/* Mobile click-to-call bar, mirrors the header actions */}
-    <div class="sticky-bar" aria-label="Call or book">
-      {tel ? <a class="btn" href={tel}><Icon name="phone" />Call {business.phoneDisplay}</a> : <span class="btn btn-pending"><Icon name="phone" />Phone pending</span>}
-      {book ? <a class="btn" href={book}><Icon name="calendar-check" />Book</a> : <span class="btn btn-pending"><Icon name="calendar-check" />Booking pending</span>}
-    </div>
+    {hasActions && path !== "/request/" && (
+      <div class="sticky-bar" aria-label="Call, request or book">
+        {tel && <a class="btn" href={tel}><Icon name="phone" />Call</a>}
+        {leadsApi && <a class="btn" href="/request/"><Icon name="note-pencil" />Request</a>}
+        {book && <a class="btn" href={book} rel="noopener"><Icon name="calendar-check" />Book</a>}
+      </div>
+    )}
   <script is:inline>
     (function () {
       var d = document.documentElement;

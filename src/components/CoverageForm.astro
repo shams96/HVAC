@@ -3,12 +3,15 @@
 // submits to the service area page (GET), which lists every ZIP code we cover.
 import Icon from "./Icon.astro";
 import { counties, totalZips } from "../data/dfw-coverage";
+import { business } from "../data/business";
 interface Props { idSuffix: string; dark?: boolean }
 const { idSuffix, dark = false } = Astro.props;
 const id = `zip-${idSuffix}`;
 const countyNames = counties.map((c) => c.name).join(", ");
+const requestOpen = Boolean(import.meta.env.PUBLIC_LEADS_API); // the request form exists only once the lead API is deployed
+const bookUrl = business.bookingUrl ?? "";
 ---
-<form class:list={["coverage", { dark }]} action="/service-area/" method="get" novalidate>
+<form class:list={["coverage", { dark }]} action="/service-area/" method="get" novalidate data-request={requestOpen ? "1" : ""} data-book={bookUrl}>
   <label class="body-1" for={id}>Your ZIP code</label>
   <div class="row">
     <input
@@ -37,6 +40,7 @@ const countyNames = counties.map((c) => c.name).join(", ");
   .help { margin: 0; color: var(--color-ink-muted); }
   .result { margin: 0; padding: var(--space-100) var(--space-200); border-radius: var(--radius-lg); border: var(--border-thin) solid var(--color-rule); background: var(--color-surface-raised); color: var(--color-ink); }
   .result[hidden] { display: none; }
+  .result :global(.next) { display: flex; flex-wrap: wrap; gap: var(--space-75); margin-top: var(--space-100); }
   .result.ok { border-color: var(--color-primary); border-width: var(--border-strong); }
   .result.miss { border-color: var(--color-accent); border-width: var(--border-strong); }
   .coverage.dark .help { color: var(--color-on-dark-muted); }
@@ -56,9 +60,17 @@ const countyNames = counties.map((c) => c.name).join(", ");
     if (!/^\d{5}$/.test(z)) { out.className = "result body-2 miss"; out.textContent = "Enter a 5 digit ZIP code, for example 75201."; out.hidden = false; return; }
     const c = county.get(z);
     out.className = `result body-2 ${c ? "ok" : "miss"}`;
+    const wantRequest = form.dataset.request === "1", book = form.dataset.book ?? "";
     out.textContent = c
-      ? `Yes, we serve ${z} in ${c} County. Request an estimate or book a service call.`
+      ? `Yes, we serve ${z} in ${c} County.${wantRequest || book ? " Choose how to continue:" : ""}`
       : `${z} is not on our list. Contact us to confirm, because the edge of the area can move.`;
+    if (c && (wantRequest || book)) {
+      const row = document.createElement("div"); row.className = "next";
+      const add = (href: string, text: string) => { const a = document.createElement("a"); a.className = "btn"; a.href = href; a.textContent = text; row.append(a); };
+      if (wantRequest) add(`/request/?zip=${z}`, "Request service");
+      if (book) add(book, "Book a time");
+      out.append(row);
+    }
     out.hidden = false;
   }
 

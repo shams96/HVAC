@@ -1,0 +1,205 @@
+---
+// Service request form. Posts to POST /api/leads (channel "form"). Rendered by /request/ only when PUBLIC_LEADS_API is set.
+// Consent checkboxes are never pre-checked and appear only when wording exists (owner/attorney approved, or a draft on staging builds).
+import Icon from "./Icon.astro";
+import { consentWording } from "../data/consent";
+import { isPlaceholderBuild, isFixtureBuild } from "../data/business";
+
+interface Props { api: string; phone?: string | null }
+const { api, phone = null } = Astro.props;
+const draft = { version: "draft-unapproved", sms: "FIXTURE wording: you may text me about this request.", email: "FIXTURE wording: you may email me about this request." };
+const wording = consentWording ?? (isPlaceholderBuild || isFixtureBuild ? draft : null);
+---
+<form id="req" class="req" novalidate data-api={api} data-wording={wording ? JSON.stringify(wording) : ""} data-phone={phone ?? ""}>
+  <p class="safety body-5"><Icon name="warning" /> For a gas smell or a carbon monoxide alarm, leave the building and call 911 before anything else.</p>
+
+  <fieldset class="kind">
+    <legend class="body-1">This is for</legend>
+    <label class="choice body-2"><input type="radio" name="type" value="B2C" checked /> A home</label>
+    <label class="choice body-2"><input type="radio" name="type" value="B2B" /> A commercial building</label>
+  </fieldset>
+
+  <div class="field" id="f-company" hidden>
+    <label class="body-1" for="company">Company name</label>
+    <input id="company" name="company" autocomplete="organization" maxlength="160" aria-describedby="e-company" />
+    <p class="err caption-2" id="e-company" role="alert" hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="body-1" for="name">Your name</label>
+    <input id="name" name="name" autocomplete="name" maxlength="120" required aria-describedby="e-name" />
+    <p class="err caption-2" id="e-name" role="alert" hidden></p>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="body-1" for="phone">Phone</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="32" aria-describedby="h-contact e-phone" />
+      <p class="err caption-2" id="e-phone" role="alert" hidden></p>
+    </div>
+    <div class="field">
+      <label class="body-1" for="email">Email (optional)</label>
+      <input id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" aria-describedby="h-contact e-email" />
+      <p class="err caption-2" id="e-email" role="alert" hidden></p>
+    </div>
+  </div>
+  <p class="help caption-2" id="h-contact">Give us a phone number or an email so we can reach you.</p>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="body-1" for="zip">ZIP code</label>
+      <input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" required aria-describedby="e-zip" />
+      <p class="err caption-2" id="e-zip" role="alert" hidden></p>
+    </div>
+    <div class="field">
+      <label class="body-1" for="service">What do you need?</label>
+      <select id="service" name="service" required aria-describedby="e-service">
+        <option value="">Choose one</option>
+        <option value="cooling">Cooling (air conditioning)</option>
+        <option value="heating">Heating</option>
+        <option value="other">Something else or not sure</option>
+      </select>
+      <p class="err caption-2" id="e-service" role="alert" hidden></p>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="body-1" for="details">What is happening? (optional)</label>
+    <textarea id="details" name="details" rows="4" maxlength="1000"></textarea>
+  </div>
+
+  <label class="choice body-2"><input type="checkbox" name="urgent" /> This is urgent, such as no heating or cooling</label>
+
+  {wording && (
+    <fieldset class="consent">
+      <legend class="body-1">How we may contact you (optional)</legend>
+      <label class="choice body-6"><input type="checkbox" name="consent-sms" /> {wording.sms}</label>
+      <label class="choice body-6"><input type="checkbox" name="consent-email" /> {wording.email}</label>
+    </fieldset>
+  )}
+
+  <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+  <p class="err caption-2 form-err" id="e-form" role="alert" hidden></p>
+  <button type="submit" class="btn btn-lg" id="req-send">Send request<Icon name="arrow-right" /></button>
+</form>
+
+<div class="done card" id="req-done" role="status" tabindex="-1" hidden>
+  <p class="heading-5">Request received</p>
+  <p class="body-3" id="req-done-text"></p>
+</div>
+
+<style>
+  .req { display: grid; gap: var(--space-300); max-width: 36rem; }
+  .safety { margin: 0; padding: var(--space-100) var(--space-200); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-lg); background: var(--color-surface-raised); display: flex; gap: var(--space-75); align-items: flex-start; }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-75); }
+  legend { padding: 0; margin-bottom: var(--space-75); }
+  .field { display: grid; gap: var(--space-75); align-content: start; }
+  .field[hidden], .err[hidden], .done[hidden] { display: none; }
+  .grid2 { display: grid; gap: var(--space-300); }
+  @media (min-width: 40rem) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    min-height: var(--touch-min); padding: var(--space-75) var(--space-200); inline-size: var(--layout-full); box-sizing: border-box;
+    font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); color: var(--color-ink);
+    background: var(--color-surface-raised); border: var(--border-strong) solid var(--color-ink-muted); border-radius: var(--radius-lg);
+    transition: border-color var(--dur-color) var(--ease);
+  }
+  textarea { resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { border-color: var(--color-focus); }
+  .invalid { border-color: var(--color-accent) !important; }
+  .choice { display: flex; gap: var(--space-100); align-items: flex-start; min-height: var(--touch-min); align-items: center; cursor: pointer; }
+  .choice input { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--color-primary); flex: none; }
+  .help { margin: 0; color: var(--color-ink-muted); }
+  .err { margin: 0; color: var(--color-accent); font-weight: var(--weight-semibold); }
+  .hp { position: absolute; inset-inline-start: -999rem; }
+  .done { padding: var(--space-400); max-width: 36rem; display: grid; gap: var(--space-100); }
+  .done p { margin: 0; }
+  #req-send[disabled] { opacity: 0.6; cursor: progress; }
+</style>
+
+<script>
+  const form = document.getElementById("req") as HTMLFormElement | null;
+  if (form) {
+    const API = (form.dataset.api ?? "").replace(/\/$/, "");
+    const wording = form.dataset.wording ? JSON.parse(form.dataset.wording) : null;
+    const phoneShown = form.dataset.phone ?? "";
+    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    const val = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? "").trim();
+
+    // Arrive with the ZIP prefilled from the coverage checker (?zip=75201).
+    const qz = new URLSearchParams(location.search).get("zip");
+    if (qz && /^\d{5}$/.test(qz)) (form.elements.namedItem("zip") as HTMLInputElement).value = qz;
+
+    const company = $("f-company");
+    const kind = () => form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? "B2C";
+    form.querySelectorAll<HTMLInputElement>('input[name="type"]').forEach((r) => r.addEventListener("change", () => { company.hidden = kind() !== "B2B"; }));
+
+    function setErr(field: string, msg: string | null) {
+      const e = $(`e-${field}`); const inp = form!.elements.namedItem(field) as HTMLElement | null;
+      if (msg) { e.textContent = msg; e.hidden = false; inp?.classList.add("invalid"); inp?.setAttribute("aria-invalid", "true"); }
+      else { e.textContent = ""; e.hidden = true; inp?.classList.remove("invalid"); inp?.removeAttribute("aria-invalid"); }
+    }
+
+    function validate(): string | null {
+      const errs: Record<string, string> = {};
+      if (kind() === "B2B" && !val("company")) errs.company = "Enter your company name.";
+      if (!val("name")) errs.name = "Enter your name.";
+      const digits = val("phone").replace(/\D/g, "");
+      if (val("phone") && (digits.length < 10 || digits.length > 11)) errs.phone = "Enter a 10 digit phone number, for example 214 555 0123.";
+      if (val("email") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email"))) errs.email = "Enter an email address like name@example.com.";
+      if (!val("phone") && !val("email")) errs.phone = "Enter a phone number or an email so we can reach you.";
+      if (!/^\d{5}$/.test(val("zip"))) errs.zip = "Enter a 5 digit ZIP code, for example 75201.";
+      if (!val("service")) errs.service = "Choose what you need.";
+      let first: string | null = null;
+      for (const f of ["company", "name", "phone", "email", "zip", "service"]) { setErr(f, errs[f] ?? null); if (errs[f] && !first) first = f; }
+      return first;
+    }
+
+    let sending = false;
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      if (sending) return;
+      const bad = validate();
+      if (bad) { (form.elements.namedItem(bad) as HTMLElement).focus(); return; }
+      sending = true;
+      const btn = $("req-send") as HTMLButtonElement; const label = btn.innerHTML;
+      btn.disabled = true; btn.textContent = "Sending";
+      const fe = $("e-form"); fe.hidden = true;
+
+      const consents: { channel: string; wordingVersion: string }[] = [];
+      if (wording) {
+        if ((form.elements.namedItem("consent-sms") as HTMLInputElement)?.checked) consents.push({ channel: "sms", wordingVersion: wording.version });
+        if ((form.elements.namedItem("consent-email") as HTMLInputElement)?.checked) consents.push({ channel: "email", wordingVersion: wording.version });
+      }
+      const body: Record<string, unknown> = {
+        type: kind(), channel: "form", serviceLine: val("service"), zip: val("zip"), name: val("name"),
+        emergency: (form.elements.namedItem("urgent") as HTMLInputElement).checked,
+        details: { description: val("details") }, source: "website-form", website: val("website"),
+      };
+      if (val("phone")) body.phone = val("phone");
+      if (val("email")) body.email = val("email");
+      if (consents.length) body.consents = consents;
+      if (kind() === "B2B") body.b2b = { company: val("company") };
+
+      try {
+        const res = await fetch(`${API}/api/leads`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+        if (res.status === 201) {
+          form.hidden = true;
+          const done = $("req-done");
+          $("req-done-text").textContent = `Thank you, ${val("name")}. We have your request for ZIP ${val("zip")} and a person will contact you to confirm the details.` + (phoneShown && (form.elements.namedItem("urgent") as HTMLInputElement).checked ? ` For an urgent problem you can also call ${phoneShown}.` : "");
+          done.hidden = false; done.focus();
+        } else if (res.status === 429) {
+          fe.textContent = "Too many requests from this connection. Wait a minute and send it again."; fe.hidden = false;
+        } else if (res.status === 400) {
+          fe.textContent = "Some details were not accepted. Check the highlighted fields and send it again."; fe.hidden = false;
+        } else {
+          fe.textContent = "We could not save your request. Try again in a few minutes" + (phoneShown ? `, or call ${phoneShown}.` : "."); fe.hidden = false;
+        }
+      } catch {
+        fe.textContent = "We could not reach the server. Check your connection and send it again" + (phoneShown ? `, or call ${phoneShown}.` : "."); fe.hidden = false;
+      } finally {
+        sending = false; btn.disabled = false; btn.innerHTML = label;
+      }
+    });
+  }
+</script>
