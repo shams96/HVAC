@@ -1,6 +1,7 @@
 // Single source of truth for owner-verified facts (site, schema, and later GBP sync).
 // Every field is null until the owner supplies it. Nothing here is invented.
 export interface Business {
+  brandName: string; // trading name shown in the logo and header; owner supplied 2026-11-22
   legalName: string | null;
   phoneDisplay: string | null; // e.g. "(555) 010-0100"
   phoneE164: string | null; // e.g. "+15550100100"
@@ -16,6 +17,7 @@ export interface Business {
 }
 
 export const business: Business = {
+  brandName: "Vertex AirWorks",
   legalName: null,
   phoneDisplay: null,
   phoneE164: null,

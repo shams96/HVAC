@@ -131,8 +131,7 @@ a { color: var(--color-primary); }
 .bar { transition: box-shadow var(--dur-color) var(--ease); }
 .is-scrolled .bar { box-shadow: var(--shadow-2); }
 .brand { display: inline-flex; align-items: center; gap: var(--space-75); }
-.brand-mark { display: inline-flex; align-items: center; justify-content: center; inline-size: 2rem; block-size: 2rem; border-radius: var(--radius-lg); background: var(--color-primary); color: var(--color-on-dark); }
-.brand-mark .icon { inline-size: 1.25rem; block-size: 1.25rem; }
+.brand-logo { display: block; block-size: 2.5rem; inline-size: auto; }
 
 /* Footer: three columns on wide screens. */
 .site-footer { padding: var(--space-600) var(--gutter) var(--space-400); }

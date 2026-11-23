@@ -38,8 +38,9 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
-    {/* Empty icon until the owner supplies a brand favicon; avoids a /favicon.ico 404. */}
-    <link rel="icon" href="data:," />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {(isPlaceholderBuild || isFixtureBuild || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <script is:inline>document.documentElement.classList.add("js");</script>
     {ldJson.map((j) => <script type="application/ld+json" set:html={j} />)}
@@ -48,7 +49,7 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="bar">
-        <a class="brand" href="/" aria-current={path === "/" ? "page" : undefined}><span class="brand-mark"><Icon name="fan" /></span>{business.legalName ?? "Company name pending"}</a>
+        <a class="brand" href="/" aria-current={path === "/" ? "page" : undefined}><img class="brand-logo" src="/brand/logo.svg" width="128" height="40" alt={business.brandName} /></a>
         <nav aria-label="Primary">
           <a href="/#services">Services</a>
           <a href="/#how">How it works</a>
@@ -64,7 +65,7 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     <footer class="site-footer band-ink">
       <div class="inner">
         <div>
-          <p class="title-1">{business.legalName ?? "Company name pending"}</p>
+          <p class="title-1">{business.brandName}</p>
           <p class="body-6 muted">Heating and cooling for homes and commercial buildings{business.serviceRegion ? ` in ${business.serviceRegion}` : ""}.</p>
           {business.streetAddress && <p class="body-6">{business.streetAddress}, {business.city}, {business.state} {business.postalCode}</p>}
           {business.hours && <p class="body-6">{business.hours}</p>}
