@@ -14,7 +14,7 @@ const siteUrl = (Astro.site ?? new URL("http://localhost")).origin;
 const ld = buildService(service, business, siteUrl);
 const priceText = service.pricing.kind === "approved" ? `Price: ${service.pricing.amount} ${service.pricing.currency}.` : "Estimates are free.";
 ---
-<Base title={service.name} description={service.directAnswer} jsonld={ld ? [ld] : []}>
+<Base title={service.name} description={service.directAnswer} jsonld={ld ? [ld] : []} crumbs={[{ name: service.name, path: `/services/${service.slug}/` }]}>
   <article class="wrap">
     <h1 class="heading-2">{service.name}</h1>
     {/* Direct answer first: what it is, who it is for. */}

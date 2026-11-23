@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/post-build.mjs",
+    "verify:seo": "node scripts/verify-built.mjs",
+    "og": "node scripts/build-og.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
     "preview": "astro preview",
     "audit": "node scripts/contrast-audit.mjs",
     "test": "node --test \"tests/*.test.mjs\"",

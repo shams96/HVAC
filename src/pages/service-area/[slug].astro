@@ -13,6 +13,7 @@ const jobs = area.localJobs.filter((j) => j.approved);
 <Base
   title={`Heating and cooling service in ${area.city}, ${area.state} ${area.zip}`}
   description={`Heating and cooling service in ${area.city}, ${area.state} ${area.zip}: services offered, recent local work, and local notes.`}
+  crumbs={[{ name: "Service area", path: "/service-area/" }, { name: `${area.city} ${area.zip}`, path: `/service-area/${area.slug}/` }]}
 >
   <article class="wrap">
     <p class="crumb caption-2"><a href="/service-area/">Service area</a> / {area.zip}</p>

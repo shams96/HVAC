@@ -7,18 +7,30 @@ import Icon from "../components/Icon.astro";
 import ChatWidget from "../components/ChatWidget.astro";
 import { business, isPlaceholderBuild, isFixtureBuild } from "../data/business";
 import { counties } from "../data/dfw-coverage";
+import { buildWebSite, buildOrganization, buildBreadcrumbs } from "../lib/jsonld.mjs";
 
 interface Props {
   title: string;
   description: string;
   jsonld?: object[];
   noindex?: boolean;
+  crumbs?: { name: string; path: string }[]; // trail after Home; emits BreadcrumbList
 }
-const { title, description, jsonld = [], noindex = false } = Astro.props;
+const { title, description, jsonld = [], noindex = false, crumbs } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const siteUrl = (Astro.site ?? new URL("http://localhost")).origin;
+const ogImage = `${siteUrl}/og.png`;
+// Site-wide structured data from already-stated facts only. HVACBusiness (full facts) replaces Organization when a page passes it.
+const hasBusiness = jsonld.some((j: any) => typeof j?.["@id"] === "string" && j["@id"].endsWith("#business"));
+const isHome = Astro.url.pathname === "/";
+const baseLd = [
+  isHome ? buildWebSite(business, siteUrl) : null,
+  isHome && !hasBusiness ? buildOrganization(business, siteUrl, counties.map((c) => `${c.name} County, ${business.state}`)) : null,
+  crumbs ? buildBreadcrumbs(crumbs, siteUrl) : null,
+].filter(Boolean) as object[];
 // Escape "<" in JSON-LD so a value can never close the script tag. Built without a literal backslash on purpose.
 const LT = String.fromCharCode(92) + "u003c";
-const ldJson = jsonld.map((j) => JSON.stringify(j).replace(/</g, LT));
+const ldJson = [...baseLd, ...jsonld].map((j) => JSON.stringify(j).replace(/</g, LT));
 const tel = business.phoneE164 ? `tel:${business.phoneE164}` : null;
 const book = business.bookingUrl;
 const path = Astro.url.pathname;
@@ -39,7 +51,16 @@ const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:site_name" content={business.brandName} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${business.brandName} logo`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

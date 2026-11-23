@@ -12,7 +12,7 @@ const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? 
 const showPending = isPlaceholderBuild || isFixtureBuild;
 const region = business.serviceRegion ?? "the Dallas and Fort Worth area";
 ---
-<Base title={`Service area: ${region}`} description={`The cities, counties and ${totalZips} ZIP codes we list in ${region}. Check your ZIP code for an instant answer.`}>
+<Base title={`Service area: ${region}`} description={`The cities, counties and ${totalZips} ZIP codes we list in ${region}. Check your ZIP code for an instant answer.`} crumbs={[{ name: "Service area", path: "/service-area/" }]}>
   <section class="wrap">
     <div class="intro stack">
       <p class="eyebrow"><Icon name="map-trifold" /> Service area</p>
