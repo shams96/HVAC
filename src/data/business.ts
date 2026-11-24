@@ -17,7 +17,7 @@ export interface Business {
 }
 
 export const business: Business = {
-  brandName: "Vertex AirWorks",
+  brandName: "AC Repair Masters",
   legalName: null,
   phoneDisplay: null,
   phoneE164: null,

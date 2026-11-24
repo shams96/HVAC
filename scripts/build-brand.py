@@ -1,4 +1,4 @@
-"""Generate the Vertex AirWorks logo files with the wordmark converted to outlines (no font needed to display).
+"""Generate the AC Repair Masters logo files with the wordmark converted to outlines (no font needed to display).
 Run: python scripts/build-brand.py   Output: public/brand/*.svg
 Colours mirror src/styles/tokens.css (primary, accent, ink, surface)."""
 import os
@@ -27,18 +27,18 @@ def text_path(s, x, baseline, size, tracking=0.0):
     return pen.getCommands(), cx - tracking
 
 def mark(bg, v, dot, size=64, vw=8):
-    # A roof-peak apex (the vertex, also an "A" for AirWorks) over a line of moving air. Two tone: no accent colour inside the mark.
+    # A roof-peak apex (an "A" for AC) over a line of moving air. Two tone: no accent colour inside the mark.
     lw = max(vw - 2, 5)
     return (f'<rect width="64" height="64" rx="14" fill="{bg}"/>'
             f'<path d="M14 35 L32 14 L50 35" fill="none" stroke="{v}" stroke-width="{vw}" stroke-linecap="round" stroke-linejoin="round"/>'
             f'<path d="M14 49 C19 42 25 42 32 49 C39 56 45 56 50 49" fill="none" stroke="{v}" stroke-width="{lw}" stroke-linecap="round"/>')
 
 def lockup(bg, v, dot, c1, c2):
-    d1, w1 = text_path("Vertex", 80, 27, 28, 0.2)
-    d2, w2 = text_path("AirWorks", 80, 57, 28, 0.2)
+    d1, w1 = text_path("AC Repair", 80, 27, 28, 0.2)
+    d2, w2 = text_path("Masters", 80, 57, 28, 0.2)
     w = max(w1, w2) + 2
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:.0f} 64" width="{w:.0f}" height="64" role="img" aria-labelledby="t">'
-            f'<title id="t">Vertex AirWorks</title>{mark(bg, v, dot)}'
+            f'<title id="t">AC Repair Masters</title>{mark(bg, v, dot)}'
             f'<path d="{d1}" fill="{c1}"/><path d="{d2}" fill="{c2}"/></svg>')
 
 def write(name, s):
@@ -46,7 +46,7 @@ def write(name, s):
 
 write("logo.svg", lockup(TEAL, IVORY, BERRY, INK, TEAL))
 write("logo-on-dark.svg", lockup(IVORY, TEAL, BERRY, IVORY, IVORY))
-write("mark.svg", f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Vertex AirWorks">{mark(TEAL, IVORY, BERRY)}</svg>')
+write("mark.svg", f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="AC Repair Masters">{mark(TEAL, IVORY, BERRY)}</svg>')
 # Favicon: same mark, heavier V so it holds at 16 px.
 write("../favicon.svg", f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">{mark(TEAL, IVORY, BERRY, vw=9)}</svg>')
 print("ok")

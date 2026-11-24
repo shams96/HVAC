@@ -10,7 +10,7 @@ import { buildHeaders, inlineBlocks, sha256 } from "../scripts/lib/headers.mjs";
 import { buildPayload, sitemapUrls } from "../scripts/indexnow.mjs";
 import { verifyDist } from "../scripts/lib/verify-dist.mjs";
 
-const biz = { brandName: "Test AirWorks", legalName: null, phoneDisplay: null, phoneE164: null, bookingUrl: null, streetAddress: null, city: null, state: "TX", postalCode: null, hours: null, serviceRegion: "the Test area" };
+const biz = { brandName: "Test Masters", legalName: null, phoneDisplay: null, phoneE164: null, bookingUrl: null, streetAddress: null, city: null, state: "TX", postalCode: null, hours: null, serviceRegion: "the Test area" };
 const SITE = "https://example.org";
 
 test("every crawl-policy bot appears exactly once with a reason and a kind", () => {

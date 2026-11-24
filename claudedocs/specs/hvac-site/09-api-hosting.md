@@ -19,7 +19,7 @@ Status: PLAN for approval. Nothing provisioned. Skills: spec-driven-development,
 ## Verified 2026-11-23 via the Hostinger connector
 - Account has one shared plan (order 201253397, user `u727712424`) hosting 11 sites; Node.js sites already run there. No HVAC site or domain exists on it.
 - Hostinger database tools create **MySQL only**. Option C is ruled out; owner chose option A.
-- `vertexairworks.com`, `.net`, `.co` are available to register (not bought).
+- Superseded by the 2026-11-24 rename: acrepairmasters.com is taken; .net, .org, .co and acrepairmastersdfw.com were available (not bought).
 
 ## Options
 | | Where API runs | Where Postgres runs | Extra cost | Notes |
