@@ -21,6 +21,11 @@ Status: PLAN for approval. Nothing provisioned. Skills: spec-driven-development,
 - Hostinger database tools create **MySQL only**. Option C is ruled out; owner chose option A.
 - Superseded by the 2026-11-24 rename: acrepairmasters.com is taken; .net, .org, .co and acrepairmastersdfw.com were available (not bought).
 
+## Progress 2026-11-25 (staging API)
+- Hostinger connector is authorized. GitHub app is installed for shams96 (active).
+- Created an empty website on the existing plan with a free temporary subdomain: `zesty-plum-raccoon-39.hostingersite.com` (setup completed). No domain bought, no extra cost. It is staging only; production uses the chosen domain later.
+- Not yet done: Postgres (needs the owner's Neon or Supabase account, connection string entered in the Hostinger env settings, never in chat), then env vars, then `hosting_deploy` of `shams96/HVAC` branch `main` with rootDirectory `api`, entryFile `src/main.mjs`, Node 22.
+
 ## Options
 | | Where API runs | Where Postgres runs | Extra cost | Notes |
 |---|---|---|---|---|
