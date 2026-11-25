@@ -69,3 +69,30 @@ test("filled honeypot looks like success but stores nothing", async () => {
   assert.equal((await db.query("SELECT count(*)::int AS n FROM leads")).rows[0].n, 0);
   await close();
 });
+
+// Shape built by src/lib/quick-request.mjs (phone-only callback request with triage selections).
+test("phone-only quick request stores the triage level, no name or ZIP, and no consent record", async () => {
+  const { db, post, close } = await setup();
+  const r = await post({
+    type: "B2C", channel: "form", serviceLine: "cooling", phone: "214 555 0123", emergency: true,
+    details: { quick: true, description: "Callback request. Reported: No cooling. Vulnerable person at the property. Name and ZIP not collected.", triage: { level: "urgent", symptom: "no-cooling", atRisk: true, unsafeTemp: false } },
+    source: "website-quick", website: "",
+  });
+  assert.equal(r.status, 201);
+  const lead = (await db.query("SELECT source, zip, service_line, emergency, routed_by, details FROM leads")).rows[0];
+  assert.equal(lead.source, "website-quick");
+  assert.equal(lead.zip, null);
+  assert.equal(lead.service_line, "cooling");
+  assert.equal(lead.emergency, true);
+  assert.equal(lead.routed_by, "unrouted");
+  assert.deepEqual(lead.details.triage, { level: "urgent", symptom: "no-cooling", atRisk: true, unsafeTemp: false });
+  const c = (await db.query("SELECT name, phone_e164 FROM contacts")).rows[0];
+  assert.equal(c.name, null);
+  assert.ok(c.phone_e164);
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM consent_records")).rows[0].n, 0);
+  // the same phone sending the full form later for the same service attaches to the open lead instead of duplicating
+  const again = await post({ type: "B2C", channel: "form", serviceLine: "cooling", phone: "(214) 555-0123", zip: "75201", name: "Sample Person", source: "website-form", website: "" });
+  assert.equal(again.json.deduped, true);
+  assert.equal((await db.query("SELECT count(*)::int AS n FROM leads")).rows[0].n, 1);
+  await close();
+});

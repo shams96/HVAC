@@ -54,7 +54,7 @@ Send A1 to A6 first; they unlock the real, indexable build.
 - [ ] Training-bot stance: allow or block GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot (currently allowed by default); whether to add a Content-Signal line.
 
 ## Brief vs built (what is done)
-- Done: site, DFW coverage checker, request form (off until API exists), lead API (298 tests), SEO layer (robots per bot, llms.txt, JSON-LD, sitemap lastmod, headers/CSP, OG image, verifier), staging deploy.
+- Done: site, DFW coverage checker, request form and one-field phone callback request (both off until API exists), lead API (298 tests), SEO layer (robots per bot, llms.txt, JSON-LD, sitemap lastmod, headers/CSP, OG image, verifier), staging deploy.
 - Blocked on owner items: service and ZIP pages, FAQ and review schema, HVACBusiness data, form go-live, confirmations, Turnstile, API deployment, Astro 7, rename assets, real-phone test.
 - Not promised: rankings or AI citations; llms.txt effect is unproven.
 

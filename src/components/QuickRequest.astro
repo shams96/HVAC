@@ -1,0 +1,106 @@
+---
+// Quick callback request: what is happening (exact selection, sets triage level) plus a phone number.
+// Posts to POST /api/leads (source "website-quick"). Rendered by /request/ only when PUBLIC_LEADS_API is set.
+// Copy is draft pending owner and attorney review.
+import Icon from "./Icon.astro";
+import TriageFields from "./TriageFields.astro";
+
+interface Props { api: string; phone?: string | null }
+const { api, phone = null } = Astro.props;
+---
+<section class="quick card" aria-labelledby="quick-title">
+  <h2 id="quick-title" class="heading-5"><Icon name="phone" /> Request a callback</h2>
+  <p class="body-3">Choose what is happening and give a phone number. A person calls to take the details.</p>
+  <form id="quick" novalidate data-api={api} data-phone={phone ?? ""}>
+    <TriageFields prefix="q-" />
+    <div class="field">
+      <label class="body-1" for="q-phone">Phone number</label>
+      <input id="q-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="32" required aria-describedby="e-q-phone" />
+      <p class="err caption-2" id="e-q-phone" role="alert" hidden></p>
+    </div>
+    <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off" /></div>
+    <p class="err caption-2" id="e-q-form" role="alert" hidden></p>
+    <button type="submit" class="btn btn-lg" id="q-send">Request callback<Icon name="arrow-right" /></button>
+    <p class="help caption-2">We use this number only to call you about this request.</p>
+  </form>
+  <div class="done" id="q-done" role="status" tabindex="-1" hidden>
+    <p class="heading-5">Request received</p>
+    <p class="body-3" id="q-done-text"></p>
+  </div>
+</section>
+
+<style>
+  .quick { padding: var(--space-400); max-width: 36rem; display: grid; gap: var(--space-200); }
+  .quick h2, .quick p { margin: 0; }
+  .quick h2 { display: flex; gap: var(--space-75); align-items: center; }
+  form { display: grid; gap: var(--space-200); }
+  .field { display: grid; gap: var(--space-75); }
+  .err[hidden], .done[hidden], form[hidden] { display: none; }
+  input:not([type="checkbox"]) {
+    min-height: var(--touch-min); padding: var(--space-75) var(--space-200); inline-size: var(--layout-full); box-sizing: border-box;
+    font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); color: var(--color-ink);
+    background: var(--color-surface-raised); border: var(--border-strong) solid var(--color-ink-muted); border-radius: var(--radius-lg);
+    transition: border-color var(--dur-color) var(--ease);
+  }
+  input:focus-visible { border-color: var(--color-focus); }
+  .invalid { border-color: var(--color-accent) !important; }
+  .help { color: var(--color-ink-muted); }
+  .err { color: var(--color-accent); font-weight: var(--weight-semibold); }
+  .hp { position: absolute; inset-inline-start: -999rem; }
+  .done { display: grid; gap: var(--space-100); }
+  #q-send[disabled] { opacity: 0.6; cursor: progress; }
+</style>
+
+<script>
+  import { phoneError, buildQuickBody } from "../lib/quick-request.mjs";
+  import { symptomError, symptomById } from "../lib/triage.mjs";
+  const form = document.getElementById("quick") as HTMLFormElement | null;
+  if (form) {
+    const API = (form.dataset.api ?? "").replace(/\/$/, "");
+    const phoneShown = form.dataset.phone ?? "";
+    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    const field = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const mark = (input: HTMLElement, errId: string, msg: string | null) => {
+      const e = $(errId);
+      if (msg) { e.textContent = msg; e.hidden = false; input.classList.add("invalid"); input.setAttribute("aria-invalid", "true"); }
+      else { e.hidden = true; input.classList.remove("invalid"); input.removeAttribute("aria-invalid"); }
+    };
+    let sending = false;
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      if (sending) return;
+      const symptom = field("symptom");
+      const se = symptomError(symptom.value); const pe = phoneError(field("phone").value);
+      mark(symptom, "e-q-symptom", se); mark(field("phone"), "e-q-phone", pe);
+      if (se) { symptom.focus(); return; }
+      if (pe) { field("phone").focus(); return; }
+      const body = buildQuickBody({ phone: field("phone").value, symptom: symptom.value, atRisk: field("at-risk")?.checked, unsafeTemp: field("unsafe-temp")?.checked, website: field("website").value });
+      if (!body) return;
+      sending = true;
+      const btn = $("q-send") as HTMLButtonElement; const label = btn.innerHTML;
+      btn.disabled = true; btn.textContent = "Sending";
+      const fe = $("e-q-form"); fe.hidden = true;
+      try {
+        const res = await fetch(`${API}/api/leads`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+        if (res.status === 201) {
+          form.hidden = true;
+          const safety = symptomById(symptom.value)?.level === "safety";
+          $("q-done-text").textContent = "Thank you. We have your number and a person will call you back to take the details."
+            + (safety ? " If anyone is in danger, call 911 now." : "")
+            + (phoneShown && body.emergency ? ` You can also call ${phoneShown}.` : "");
+          const done = $("q-done"); done.hidden = false; done.focus();
+        } else if (res.status === 429) {
+          fe.textContent = "Too many requests from this connection. Wait a minute and send it again."; fe.hidden = false;
+        } else if (res.status === 400) {
+          fe.textContent = "Some details were not accepted. Check your choices and phone number and send it again."; fe.hidden = false;
+        } else {
+          fe.textContent = "We could not save your request. Try again in a few minutes" + (phoneShown ? `, or call ${phoneShown}.` : "."); fe.hidden = false;
+        }
+      } catch {
+        fe.textContent = "We could not reach the server. Check your connection and send it again" + (phoneShown ? `, or call ${phoneShown}.` : "."); fe.hidden = false;
+      } finally {
+        sending = false; btn.disabled = false; btn.innerHTML = label;
+      }
+    });
+  }
+</script>

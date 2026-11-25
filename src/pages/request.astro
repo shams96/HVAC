@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import RequestForm from "../components/RequestForm.astro";
+import QuickRequest from "../components/QuickRequest.astro";
 import { business } from "../data/business";
 
 const api = import.meta.env.PUBLIC_LEADS_API as string | undefined; // set only when the lead API is deployed
@@ -12,10 +13,14 @@ const phone = business.phoneDisplay;
     <div class="intro stack">
       <p class="eyebrow"><Icon name="note-pencil" /> Request service</p>
       <h1 class="heading-2">Tell us what you need</h1>
-      <p class="body-3 lede">Send the details below. A person reviews your request and contacts you to confirm the visit. This form does not book a time by itself.</p>
+      <p class="body-3 lede">Leave a phone number for a callback, or send the details below. A person reviews your request and contacts you to confirm the visit. This form does not book a time by itself.</p>
     </div>
     {api
-      ? <RequestForm api={api} phone={phone} />
+      ? <>
+          <QuickRequest api={api} phone={phone} />
+          <h2 class="heading-5 or">Or send the details now</h2>
+          <RequestForm api={api} phone={phone} />
+        </>
       : <p class="body-3 closed">Online requests are not open yet. Check your ZIP code on the <a href="/service-area/">service area page</a> and come back soon.</p>}
   </section>
 </Base>
@@ -24,4 +29,5 @@ const phone = business.phoneDisplay;
   .intro { max-width: 40rem; margin-bottom: var(--space-500); }
   .lede { color: var(--color-ink-muted); }
   .closed { max-width: 40rem; }
+  .or { margin: var(--space-500) 0 var(--space-300); }
 </style>

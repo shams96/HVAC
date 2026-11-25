@@ -1,0 +1,70 @@
+---
+// Shared triage questions for the quick request and the full form: what is happening (required), a safety alert for
+// gas, carbon monoxide and fire, and risk questions for a system that is not running. See src/lib/triage.mjs for the rules.
+import Icon from "./Icon.astro";
+import { SYMPTOMS, AT_RISK_LABEL, UNSAFE_TEMP_LABEL } from "../lib/triage.mjs";
+
+interface Props { prefix?: string }
+const { prefix = "" } = Astro.props;
+const groups = [...new Set(SYMPTOMS.map((s) => s.group))];
+const downIds = SYMPTOMS.filter((s) => s.asksRisk).map((s) => s.id);
+---
+<div class="triage" data-triage data-down={downIds.join(" ")}>
+  <div class="field">
+    <label class="body-1" for={`${prefix}symptom`}>What is happening?</label>
+    <select id={`${prefix}symptom`} name="symptom" required aria-describedby={`e-${prefix}symptom`}>
+      <option value="">Choose one</option>
+      {groups.map((g) => (
+        <optgroup label={g}>
+          {SYMPTOMS.filter((s) => s.group === g).map((s) => <option value={s.id} data-msg={s.alert ?? ""}>{s.label}</option>)}
+        </optgroup>
+      ))}
+    </select>
+    <p class="err caption-2" id={`e-${prefix}symptom`} role="alert" hidden></p>
+  </div>
+
+  <div class="alert body-5" data-alert-box role="alert" hidden><Icon name="warning" /> <span data-alert-text></span></div>
+
+  <fieldset class="risk" data-risk hidden>
+    <legend class="body-1">Tell us if either applies (optional)</legend>
+    <label class="choice body-2"><input type="checkbox" name="at-risk" /> {AT_RISK_LABEL}</label>
+    <label class="choice body-2"><input type="checkbox" name="unsafe-temp" /> {UNSAFE_TEMP_LABEL}</label>
+  </fieldset>
+</div>
+
+<style>
+  .triage { display: grid; gap: var(--space-200); }
+  .field { display: grid; gap: var(--space-75); align-content: start; }
+  select {
+    min-height: var(--touch-min); padding: var(--space-75) var(--space-200); inline-size: var(--layout-full); box-sizing: border-box;
+    font: var(--weight-medium) var(--text-base) / var(--lh-base) var(--font-body); color: var(--color-ink);
+    background: var(--color-surface-raised); border: var(--border-strong) solid var(--color-ink-muted); border-radius: var(--radius-lg);
+    transition: border-color var(--dur-color) var(--ease);
+  }
+  select:focus-visible { border-color: var(--color-focus); }
+  .invalid { border-color: var(--color-accent) !important; }
+  .err { margin: 0; color: var(--color-accent); font-weight: var(--weight-semibold); }
+  .err[hidden], .alert[hidden], .risk[hidden] { display: none; }
+  .alert { margin: 0; padding: var(--space-200); border: var(--border-strong) solid var(--color-accent); border-radius: var(--radius-lg); background: var(--color-surface-raised); display: flex; gap: var(--space-75); align-items: flex-start; font-weight: var(--weight-semibold); }
+  .risk { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-75); }
+  legend { padding: 0; margin-bottom: var(--space-75); }
+  .choice { display: flex; gap: var(--space-100); min-height: var(--touch-min); align-items: center; cursor: pointer; }
+  .choice input { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--color-primary); flex: none; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-triage]").forEach((box) => {
+    const select = box.querySelector("select") as HTMLSelectElement;
+    const alertBox = box.querySelector<HTMLElement>("[data-alert-box]")!;
+    const alertText = box.querySelector<HTMLElement>("[data-alert-text]")!;
+    const risk = box.querySelector<HTMLElement>("[data-risk]")!;
+    const down = (box.dataset.down ?? "").split(" ");
+    select.addEventListener("change", () => {
+      const msg = select.selectedOptions[0]?.dataset.msg ?? "";
+      alertText.textContent = msg; alertBox.hidden = !msg;
+      const show = down.includes(select.value);
+      risk.hidden = !show;
+      if (!show) risk.querySelectorAll<HTMLInputElement>("input").forEach((i) => { i.checked = false; });
+    });
+  });
+</script>
