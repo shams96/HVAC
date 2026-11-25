@@ -26,6 +26,8 @@ Status: PLAN for approval. Nothing provisioned. Skills: spec-driven-development,
 - Created an empty website on the existing plan with a free temporary subdomain: `zesty-plum-raccoon-39.hostingersite.com` (setup completed). No domain bought, no extra cost. It is staging only; production uses the chosen domain later.
 - Not yet done: Postgres (needs the owner's Neon or Supabase account, connection string entered in the Hostinger env settings, never in chat), then env vars, then `hosting_deploy` of `shams96/HVAC` branch `main` with rootDirectory `api`, entryFile `src/main.mjs`, Node 22.
 
+- 2026-11-25 later: Neon Postgres exists (owner-created; string not stored in the repo). The Hostinger Node build for the staging site stalled at "running", and the owner reports no Node.js app slots left on the plan (cap inferred). Owner paused the deployment. Git auto-deploy on the staging site was switched off. The empty site `zesty-plum-raccoon-39.hostingersite.com` remains; its five non-secret env vars are set, `DATABASE_URL` is not. Next options: free a Node slot, Hostinger VPS, or an always-on host such as Render. Serverless is a poor fit (60 s background tick).
+
 ## Options
 | | Where API runs | Where Postgres runs | Extra cost | Notes |
 |---|---|---|---|---|
